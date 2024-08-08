@@ -1,7 +1,6 @@
 // src/App.js
 import React from 'react';
 import './App.css';
-import ARScene from './ARScene';
 import Interele from './Interele';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Nav from './Nav';
@@ -13,7 +12,6 @@ function App() {
     <Router>
       <Routes>
         <Route path = "/" element = {<Interele />}/>
-        <Route path="/arscene" element={<ARScene />} />
         <Route path = "/navwebxr" element = {<Nav />}/>
         <Route path = "/userupload" element = {<UserUpload />}/>
       </Routes>
