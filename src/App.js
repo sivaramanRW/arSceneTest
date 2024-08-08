@@ -5,6 +5,7 @@ import ARScene from './ARScene';
 import Interele from './Interele';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Nav from './Nav';
+import UserUpload from './UserUpload';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path = "/" element = {<Interele />}/>
         <Route path="/arscene" element={<ARScene />} />
         <Route path = "/navwebxr" element = {<Nav />}/>
+        <Route path = "/userupload" element = {<UserUpload />}/>
       </Routes>
     </Router></div>
   );
