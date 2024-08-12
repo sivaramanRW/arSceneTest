@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
  
 const UserUpload = () => {
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
-  const [photos, setPhotos] = useState([]);
+  const mediaRecorderRef = useRef(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedVideo, setRecordedVideo] = useState(null);
+  const [videoBlob, setVideoBlob] = useState(null);
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,8 +18,7 @@ const UserUpload = () => {
  
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      //const stream = await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: 'environment' }} });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         videoRef.current.onloadedmetadata = () => {
@@ -29,48 +30,50 @@ const UserUpload = () => {
     }
   };
  
-  const capturePhoto = () => {
-    const context = canvasRef.current.getContext('2d');
-    const video = videoRef.current;
-    canvasRef.current.width = 1637;
-    canvasRef.current.height = 2048;
-    context.drawImage(video, 0, 0, canvasRef.current.width, canvasRef.current.height);
-    const newPhoto = canvasRef.current.toDataURL('image/png');
-    setPhotos(prevPhotos => [...prevPhotos, newPhoto]);
-  };
-
-  const stopCamera = () => {
+  const startRecording = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject;
-      const tracks = stream.getTracks();
-      tracks.forEach(track => track.stop());
-      videoRef.current.srcObject = null;
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      let chunks = [];
+ 
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+ 
+      mediaRecorderRef.current.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        setRecordedVideo(URL.createObjectURL(blob));
+        setVideoBlob(blob);
+      };
+ 
+      mediaRecorderRef.current.start();
+      setIsRecording(true);
     }
   };
-
  
-  const uploadPhotos = async () => {
-    stopCamera()
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+ 
+  const uploadVideo = async () => {
+    if (!videoBlob) return;
+ 
     setLoading(true);
-    console.log('Uploading photos...');
+    console.log('Uploading video...');
    
     const formData = new FormData();
+    formData.append('file', videoBlob, 'recorded_video.webm');
  
     try {
-      console.log('1')
-      await Promise.all(photos.map(async (photo, index) => {
-        const response = await fetch(photo);
-        const blob = await response.blob();
-        formData.append('files', blob, `photo${index + 1}.png`);
-      }));
-
-      console.log('2')
- 
-      const res = await fetch('http://127.0.0.1:8000/upload', {
+      const res = await fetch('http://localhost:8000/upload-video', {
         method: 'POST',
         body: formData,
       });
-
  
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
@@ -78,7 +81,7 @@ const UserUpload = () => {
  
       const data = await res.json();
       console.log('Data',data)
-      const values = data.matches;
+      const values = data.matches.map(match => match.image);
       console.log('values', values)
       const detectedPlaces = [];
       for(var i = 0; i < values.length; i++){
@@ -88,26 +91,27 @@ const UserUpload = () => {
       console.log('detectedPlaces',detectedPlaces)
       const located = mostFrequentElement(detectedPlaces)
       console.log('located',located)
-      
+     
       localStorage.setItem('userLocation',located)
       localStorage.setItem('UserPosition',located)
       navigate("/navwebxr");
+ 
+      console.log('Upload response:', data);
       setResponse(data);
-      
     } catch (error) {
-      console.error('Error uploading files:', error);
+      console.error('Error uploading video:', error);
       setResponse({ message: 'Upload failed: ' + error.message });
     } finally {
       setLoading(false);
     }
   };
-
+ 
   const mostFrequentElement = (arr) =>{
     const count = {};
     arr.forEach(item => {
       count[item] = (count[item] || 0) + 1;
     });
-    
+   
     let maxCount = 0;
     let mostFrequent = null;
     for (const [item, itemCount] of Object.entries(count)) {
@@ -121,32 +125,37 @@ const UserUpload = () => {
  
   return (
     <div className='app'>
-      <video ref={videoRef} className='video-background' autoPlay></video>
-      <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+      <video ref={videoRef} className='video-background' autoPlay muted></video>
      
-      {photos.length > 0 && (
-        <div className='photo-preview'>
-          {photos.map((photo, index) => (
-            <img key={index} src={photo} alt={`Captured ${index + 1}`} className='preview-image' />
-          ))}
+      {recordedVideo && (
+        <div className='video-preview'>
+          <video src={recordedVideo} controls className='preview-video'></video>
         </div>
       )}
      
       <div className='capture-main'>
-        {photos.length < 4 && (
-          <div className='capture-but' onClick={capturePhoto}>
-            <img className='camIcon' src='camIcon.svg' alt='Capture'/>
+        {!isRecording && !recordedVideo && (
+          <div className='capture-but' onClick={startRecording}>
+            <img className='camIcon' src='recordicon.png' alt='Start Recording'/>
           </div>
         )}
-        {photos.length === 4 && (
-          <div className='capture-but' onClick={uploadPhotos}>
+        {isRecording && (
+          <div className='capture-but' onClick={stopRecording}>
+            <img className='camIcon' src='stopicon.png' alt='Stop Recording'/>
+          </div>
+        )}
+        {recordedVideo && (
+          <div className='capture-but' onClick={uploadVideo}>
             <img className='camIcon' src='uploadArrow.png' alt='Upload'/>
           </div>
         )}
       </div>
       {loading && (
-        <div className='loading'>
-          <div className='spinner'></div>
+        <div className="loading-overlay">
+          <div className="loading-content">
+            <div className="spinner"></div>
+            <div className="loading-message">Uploading video...</div>
+          </div>
         </div>
       )}
     </div>
