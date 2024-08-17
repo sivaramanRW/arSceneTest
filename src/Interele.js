@@ -7,7 +7,7 @@ const Interele = () => {
     const navigate = useNavigate();
 
     const Openarjs = () =>{
-        navigate ("/userupload");
+        navigate ("/camera");
     }
 
   return (

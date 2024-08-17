@@ -4,7 +4,8 @@ import './App.css';
 import Interele from './Interele';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Nav from './Nav';
-import UserUpload from './UserUpload';
+import Camera from './camera';
+
 
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
       <Routes>
         <Route path = "/" element = {<Interele />}/>
         <Route path = "/navwebxr" element = {<Nav />}/>
-        <Route path = "/userupload" element = {<UserUpload />}/>
+        <Route path = "/camera" element = {<Camera />}/>
       </Routes>
     </Router></div>
   );
