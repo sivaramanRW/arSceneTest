@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './camera.css'
+import { useNavigate } from 'react-router-dom';
 
 const Camera = () => {
   const videoRef = useRef(null);
@@ -7,6 +8,7 @@ const Camera = () => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [videoURL, setVideoURL] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     startCamera();
@@ -69,6 +71,13 @@ const Camera = () => {
 
       const data = await res.json();
       console.log('Response', data);
+      const values = data.matches;
+      console.log('values', values)
+      const placeDetected = values.replace(/(\d+)(\.[^\.]+)$/, '$2').replace(/\.(jpg|jpeg|png)$/, '');
+      console.log('detectedPlaces',placeDetected)
+      localStorage.setItem('userLocation',placeDetected)
+      localStorage.setItem('UserPosition',placeDetected)
+      navigate("/navwebxr");
     } catch (error) {
       console.error('Error uploading video:', error);
     }finally{
