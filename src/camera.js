@@ -71,13 +71,12 @@ const Camera = () => {
 
       const data = await res.json();
       console.log('Response', data);
-      const values = data.matches;
-      console.log('values', values)
-      const placeDetected = values.replace(/(\d+)(\.[^\.]+)$/, '$2').replace(/\.(jpg|jpeg|png)$/, '');
+      const placeDetected = data.matches;
       console.log('detectedPlaces',placeDetected)
       localStorage.setItem('userLocation',placeDetected)
       localStorage.setItem('UserPosition',placeDetected)
       navigate("/navwebxr");
+
     } catch (error) {
       console.error('Error uploading video:', error);
     }finally{
@@ -88,14 +87,19 @@ const Camera = () => {
   return (
     <div className='app'>
       <video className="video-background" ref={videoRef} autoPlay></video>
-      {!isRecording && <button onClick={startRecording}>Start Recording</button>}
-      {isRecording && <button onClick={stopRecording}>Stop Recording</button>}
-      {videoURL && !isRecording && <button onClick={uploadVideo}>Upload Video</button>}
+      {!videoURL && <div className='message-container'>
+        <div className='message'>Hold your phone straight and record a video of your surrounding avoid facing direct walls.</div>
+      </div>}
+      <div className='button-section'>
+        {!isRecording && !videoURL && <button className = 'start-record' onClick={startRecording}>Start Recording</button>}
+        {isRecording && <button className='stop-record' onClick={stopRecording}>Stop Recording</button>}
+        {videoURL && !isRecording && <button className = 'stop-record' onClick={uploadVideo}>start localizing</button>}
+      </div>
       {loading && (
         <div className="loading-overlay">
           <div className="loading-content">
             <div className="spinner"></div>
-            <div className="loading-message">Uploading video...</div>
+            <div className="loading-message">localizing</div>
           </div>
         </div>
       )}
