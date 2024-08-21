@@ -5,7 +5,7 @@ export const graph = {
     'BJ' : {'BF' : 4},
     'BI' : {'BF' : 3},
     'BG' : {'BF' : 2},
-    'BF' : {'BF' : 1},
+    'BH' : {'BF' : 1},
     'BF' : {'B' : 2.7, 'BG' : 1, 'BH' : 2, 'BI' : 3, 'BJ' : 4, 'BK' : 5},
     'BE' : {'B' : 5},
     'BD' : {'B' : 4},

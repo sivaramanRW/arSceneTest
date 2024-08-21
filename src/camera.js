@@ -8,6 +8,7 @@ const Camera = () => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [videoURL, setVideoURL] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +18,7 @@ const Camera = () => {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      //const stream = await navigator.mediaDevices.getUserMedia({ video: {facingMode: { exact: 'environment' }} });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -27,6 +29,7 @@ const Camera = () => {
 
   const startRecording = () => {
     if (videoRef.current.srcObject) {
+      setMessage(false);
       const stream = videoRef.current.srcObject;
       const recorder = new MediaRecorder(stream);
 
@@ -69,6 +72,11 @@ const Camera = () => {
         body: formData,
       });
 
+      // const res = await fetch('https://197c-103-13-40-98.ngrok-free.app/upload-video', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+
       const data = await res.json();
       console.log('Response', data);
       const placeDetected = data.matches;
@@ -87,7 +95,7 @@ const Camera = () => {
   return (
     <div className='app'>
       <video className="video-background" ref={videoRef} autoPlay></video>
-      {!videoURL && <div className='message-container'>
+      {message && <div className='message-container'>
         <div className='message'>Hold your phone straight and record a video of your surrounding avoid facing direct walls.</div>
       </div>}
       <div className='button-section'>
