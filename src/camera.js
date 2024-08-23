@@ -86,7 +86,7 @@ const Camera = () => {
       const formData = new FormData();
       formData.append('file', file);
  
-      const res = await fetch('https://1d62-103-13-40-98.ngrok-free.app/upload-video', {
+      const res = await fetch('http://localhost:8000/upload-video', {
         method: 'POST',
         body: formData,
       });
@@ -94,9 +94,10 @@ const Camera = () => {
       const data = await res.json();
       console.log('Response', data);
       const placeDetected = data.matches;
+      const userRoom = data.userRoom;
       console.log('detectedPlaces',placeDetected)
       localStorage.setItem('userLocation',placeDetected)
-      localStorage.setItem('UserPosition',placeDetected)
+      localStorage.setItem('UserPosition',userRoom)
       navigate("/navwebxr");
  
     } catch (error) {
