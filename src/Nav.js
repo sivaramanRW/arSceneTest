@@ -39,6 +39,45 @@ const Nav = () => {
     const [showDistance, setShowDistance] = useState(false);
     const [showBottomSection, setShowBottomSection] = useState(true);
     const [turnDirection, setTurnDirection] = useState('');
+    const [announcedDirection, setAnnouncedDirection] = useState(null);
+    const [navigationStarted, setNavigationStarted] = useState(false);
+ 
+    const buttonStyle = {
+        padding: '10px 20px',
+        fontSize: '16px',
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+        marginTop: '20px',
+    };
+ 
+    const speakTurnDirection = (direction) => {
+        if ('speechSynthesis' in window && navigationStarted) {
+            const utterance = new SpeechSynthesisUtterance();
+            switch(direction) {
+                case 'left':
+                    utterance.text = "Turn left";
+                    break;
+                case 'right':
+                    utterance.text = "Turn right";
+                    break;
+                case 'straight':
+                    utterance.text = "Go straight";
+                    break;
+                case 'U turn':
+                    utterance.text = "Make a U-turn";
+                    break;
+                default:
+                    utterance.text = "Recalculating route";
+            }
+            utterance.volume = 1;
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            speechSynthesis.speak(utterance);
+        }
+    };
  
     const addLabel = (text, x, y, z) => {
         const canvas = document.createElement('canvas');
@@ -221,13 +260,13 @@ const Nav = () => {
         setShowContainer(false);
         selectedContent = contents;
         setShowDistance(false);
-
+ 
         console.log('start', userLocDetected);
         console.log('end', selectedContent.path);
-
+ 
         const rooms  = selectedContent.room;
         console.log('userPosDetected', userPosDetected);
-
+ 
         if(selectedContent.path.length === 1 || selectedContent.path.length === 2){
             if (rooms.includes(userLocDetected)) {
                 console.log(selectedContent.path);
@@ -237,18 +276,18 @@ const Nav = () => {
                 const [foundPath, totalDistance] = dijkstra(graph, userLocDetected, selectedContent.path);
                 console.log('Found Path', foundPath);
                 console.log('Distance', totalDistance);
-                
+               
                 const foundPathPointsTemp = foundPath.map(point => coordinates[point]);
                 console.log('Path points', foundPathPointsTemp);
                 const transformed = transformCoordinates(foundPathPointsTemp, labels);
                 console.log('Aplhabet assigned', transformed);
-                
+               
                 const keys = Object.keys(transformed);
                 const lastKey = keys[keys.length - 1];
-                
+               
                 const transmatrix = transformCoordinatesPath(transformed, 'A', lastKey);
                 console.log('Transformed', transmatrix.transformedPoints);
-        
+       
                 setFoundPathPoints(transmatrix.transformedPoints);
                 setDistance(totalDistance);
                 setDis(true);
@@ -282,6 +321,7 @@ const Nav = () => {
         setShowDistance(true);
         setShowContainer(false);
         setShowBottomSection(false);
+        setNavigationStarted(true);
     }
  
     const createPathSegment = (start, end) => {
@@ -363,7 +403,7 @@ const Nav = () => {
     };
    
     useEffect(() => {
-        if (sceneRef.current && cameraRef.current) {
+        if (sceneRef.current && cameraRef.current && navigationStarted) {
             const positionUpdateInterval = setInterval(() => {
                 const pose = new THREE.Vector3();
                 cameraRef.current.getWorldPosition(pose);
@@ -383,10 +423,17 @@ const Nav = () => {
                     setDistance(distance);
                    
                     const newTurnDirection = calculateTurnDirection(prevPoint, currentPoint, nextPoint);
-                    setTurnDirection(newTurnDirection);
+                    if (newTurnDirection !== turnDirection) {
+                        setTurnDirection(newTurnDirection);
+                        if (newTurnDirection !== announcedDirection) {
+                            speakTurnDirection(newTurnDirection);
+                            setAnnouncedDirection(newTurnDirection);
+                        }
+                    }
                    
                     if (distance < 1) {
                         setCurrentSegmentIndex(currentSegmentIndex + 1);
+                        setAnnouncedDirection(null);
                         if (currentSegmentIndex + 2 < keys.length) {
                             const newVisiblePoints = [...visiblePathPoints, foundPathPoints[keys[currentSegmentIndex + 2]]];
                             setVisiblePathPoints(newVisiblePoints);
@@ -405,8 +452,7 @@ const Nav = () => {
    
             return () => clearInterval(positionUpdateInterval);
         }
-    }, [sceneRef, cameraRef, currentSegmentIndex, visiblePathPoints, foundPathPoints]);
- 
+    }, [sceneRef, cameraRef, currentSegmentIndex, visiblePathPoints, foundPathPoints, announcedDirection, navigationStarted]);
  
     const addDestinationMarker = (x, y) => {
         const loader = new GLTFLoader();
@@ -468,17 +514,6 @@ const Nav = () => {
           setPermissionGranted(true);
           window.addEventListener('deviceorientationabsolute', handleOrientation, true);
         }
-    };
- 
-    const buttonStyle = {
-        padding: '10px 20px',
-        fontSize: '16px',
-        backgroundColor: '#4CAF50',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        marginTop: '20px',
     };
  
     useEffect(() => {
@@ -618,7 +653,7 @@ const Nav = () => {
                                     <img src='location.svg' className='current-user-image' alt='userLocation'></img>
                                     <div>You are at {userPosDetected}</div>
                                 </div>
-                                <button className='custom-ar-button' disabled = {!customarbut}
+                                <button className='custom-ar-button'
                                     onClick={enterarbutton}>Start Exploring !</button>
                             </>
                         ) : (
