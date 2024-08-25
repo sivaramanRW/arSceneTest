@@ -657,7 +657,7 @@ const Nav = () => {
                                     <img src='location.svg' className='current-user-image' alt='userLocation'></img>
                                     <div>You are at {userPosDetected}</div>
                                 </div>
-                                <button className='custom-ar-button' disabled = {!customarbut}
+                                <button className='custom-ar-button' disabled = {customarbut}
                                     onClick={enterarbutton}>Start Expldddddoring !</button>
                             </>
                         ) : (
