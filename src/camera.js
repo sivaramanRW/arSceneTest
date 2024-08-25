@@ -9,6 +9,7 @@ const Camera = () => {
   const [videoURL, setVideoURL] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(true);
+  const [retake, setRetake] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const navigate = useNavigate();
  
@@ -94,11 +95,16 @@ const Camera = () => {
       const data = await res.json();
       console.log('Response', data);
       const placeDetected = data.matches;
-      const userRoom = data.userRoom;
-      console.log('detectedPlaces',placeDetected)
-      localStorage.setItem('userLocation',placeDetected)
-      localStorage.setItem('UserPosition',userRoom)
-      navigate("/navwebxr");
+      if(placeDetected === 0){
+        console.log("poda")
+        setRetake(true)
+      }else{
+        const userRoom = data.userRoom;
+        console.log('detectedPlaces',placeDetected)
+        localStorage.setItem('userLocation',placeDetected)
+        localStorage.setItem('UserPosition',userRoom)
+        navigate("/navwebxr");
+      }
  
     } catch (error) {
       console.error('Error uploading video:', error);
@@ -106,13 +112,44 @@ const Camera = () => {
       setLoading(false)
     }
   };
+  
+  const retake_video = () => {
+
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+    }
+  
+    if (videoRef.current) {
+      const stream = videoRef.current.srcObject;
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+      videoRef.current.srcObject = null;
+    }
+  
+    setVideoURL('');
+    setMessage(true);
+    setRetake(false);
+    setRecordingTime(0);
+    startCamera();
+  };
+  
  
   return (
     <div className='app'>
       <video className="video-background" ref={videoRef} autoPlay></video>
-      {message && <div className='message-container'>
-        <div className='message'>Hold your phone straight and record a video of your surrounding avoid facing direct walls.</div>
-      </div>}
+      {message && 
+        <div className='message-container'>
+          <div className='message'>Hold your phone straight and record a video of your surrounding avoid facing direct walls.</div>
+        </div>
+      }
+      {retake &&
+         <div className='message-container'>
+           <div className='message'>Please retake the video by keeping your phone steady and ensuring the camera captures the surroundings clearly.</div>
+         </div>
+      }
       <div className='controls-container'>
         {isRecording && (
           <div className="recording-indicator-container">
@@ -125,7 +162,8 @@ const Camera = () => {
         <div className='button-section'>
           {!isRecording && !videoURL && <button className='start-record' onClick={startRecording}>Start Recording</button>}
           {isRecording && <button className='stop-record' onClick={stopRecording}>Stop Recording</button>}
-          {videoURL && !isRecording && <button className='start-localizing' onClick={uploadVideo}>Start Localizing</button>}
+          {videoURL && !isRecording && !retake && <button className='start-localizing' onClick={uploadVideo}>Start Localizing</button>}
+          {retake && <button className='start-localizing' onClick={retake_video}>Retake</button>}
         </div>
       </div>
       {loading && (
