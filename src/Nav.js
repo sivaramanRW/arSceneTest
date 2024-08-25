@@ -41,6 +41,7 @@ const Nav = () => {
     const [turnDirection, setTurnDirection] = useState('');
     const [announcedDirection, setAnnouncedDirection] = useState(null);
     const [navigationStarted, setNavigationStarted] = useState(false);
+    const [loop, setLoop] = useState(false);
  
     const buttonStyle = {
         padding: '10px 20px',
@@ -491,7 +492,7 @@ const Nav = () => {
         if (direction !== undefined) {
           direction = (direction + offset + 360) % 360;
           setHeading(direction);
-          if (direction >= 70 && direction <= 71) {
+          if (direction >= 70 && direction <= 72) {
             setcustomarbut(false);
           } else {
             setcustomarbut(true);
@@ -531,6 +532,10 @@ const Nav = () => {
           window.removeEventListener('deviceorientationabsolute', handleOrientation);
         };
     }, [offset]);
+
+    const eight_loop = () => {
+        setLoop(true);
+    }
  
     return (
         <div ref={mountRef} className='app'>
@@ -640,25 +645,37 @@ const Nav = () => {
                     )}
                 </>
             ) : (
-                <div className='landing-container' style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                    <div style={{ textAlign: 'center' }}>
+                <div className='landing-container' style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+                    <div className = "compass-arrow-container">
+                        {!loop && <p className = "instruction">Move your phone in an "8" pattern and tap "Next"</p>}
+                        {loop && customarbut && <p className = "instruction">Rotate your phone to point the arrow at the dot</p>}
+                        {!customarbut && loop && <p className = "instruction">Hold your phone close, align it straight to you, and tap "Start"</p>}
+
                         {permissionGranted ? (
                             <>
-                                {heading !== null ? (
-                                    <p className='compass-arrow'>
-                                        <img src='compassArrow2.svg' className='compass-arrow-img' style={{ transform: `rotate(${heading.toFixed(0)}deg)` }}></img>
-                                        <p>Rotate your device to face b/w 70 - 71</p>
-                                        <p>{heading.toFixed(0)}</p>
-                                    </p>
+                                {heading !== null && loop? (
+                                    <div style={{display : "flex", justifyContent : "center", placeItems : "center", flexDirection : "column", marginBottom : "20%"}} >
+                                        {customarbut ? 
+                                          (<div className = 'blue-dot' ></div>)
+                                          :
+                                          (<div className = 'red-dot' ></div>)
+                                        }
+                                        <img src='compassArrow2.svg' className='compass-arrow-img' style={{ transform: `rotate(${heading.toFixed(0)}deg)`}}></img>
+                                        {/* <p>{heading.toFixed(0)}</p> */}
+                                    </div>
                                 ) : (
-                                    <p className='compass-arrow'>compass disabled</p>
+                                    <div style={{display : "flex", justifyContent : "center", placeItems : "center", marginBottom : "20%"}}>
+                                        <img className='loop-image' alt = "loopimage" src = "space-bob-infinite.gif"></img>
+                                    </div>
                                 )}
-                                <div className='current-user-location'>
-                                    <img src='location.svg' className='current-user-image' alt='userLocation'></img>
-                                    <div>You are at {userPosDetected}</div>
+                                <div className='user-location'>
+                                    {/* <div className='user-location-detected'>
+                                        <img src='location.svg' className='current-user-image' alt='userLocation'></img>
+                                        <div>You are at {userPosDetected}</div>
+                                    </div> */}
+                                    {!loop && <button className='custom-ar-button' onClick={eight_loop}>Next</button>}
+                                    {loop && <button className='custom-ar-button' disabled = {customarbut} onClick={enterarbutton}>Start</button>}
                                 </div>
-                                <button className='custom-ar-button' disabled = {customarbut}
-                                    onClick={enterarbutton}>Start Expldddddoring !</button>
                             </>
                         ) : (
                             <button style={buttonStyle} onClick={requestPermission}>Enable Compass</button>
