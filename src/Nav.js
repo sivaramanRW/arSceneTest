@@ -647,7 +647,7 @@ const Nav = () => {
             ) : (
                 <div className='landing-container' style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
                     <div className = "compass-arrow-container">
-                        {!loop && <p className = "instruction">Move your phone in an "8" pattern and tap "Next"</p>}
+                        {!loop && <p className = "instruction">Move your phone in an "8" pattern and then tap "Next"</p>}
                         {loop && customarbut && <p className = "instruction">Rotate your phone to point the arrow at the dot</p>}
                         {!customarbut && loop && <p className = "instruction">Hold your phone close, align it straight to you, and tap "Start"</p>}
 
@@ -665,7 +665,7 @@ const Nav = () => {
                                     </div>
                                 ) : (
                                     <div style={{display : "flex", justifyContent : "center", placeItems : "center", marginBottom : "20%"}}>
-                                        <img className='loop-image' alt = "loopimage" src = "space-bob-infinite.gif"></img>
+                                        <img className='loop-image' alt = "loopimage" src = "eightPatten.gif"></img>
                                     </div>
                                 )}
                                 <div className='user-location'>

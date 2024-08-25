@@ -651,8 +651,7 @@
   }
 
   .loop-image{
-    height: 80px;
-    width: 80px;
-    border: 1px solid red;
-    transform: rotate(90deg);
+    height: 180px;
+    width: 180px;
+    transform: rotate(0deg);
   }
