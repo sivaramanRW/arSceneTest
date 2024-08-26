@@ -204,16 +204,16 @@ const Nav = () => {
     };
  
     const sections = [
-        { id: 1, image: "anant.jpeg", content: "Anant Cabin", name: "AnantCabin", category: "Executive", path : 'Proceed to 4th floor', room  : 'same'},
-        { id: 2, image: "ashish.jpeg", content: "Ashish Cabin", name: "AshishCabin", category: "Executive", path : 'Proceed to 4th floor',room  : 'same' },
+        //{ id: 1, image: "anant.jpeg", content: "Anant Cabin", name: "AnantCabin", category: "Executive", path : 'Proceed to 4th floor', room  : 'same'},
+        //{ id: 2, image: "ashish.jpeg", content: "Ashish Cabin", name: "AshishCabin", category: "Executive", path : 'Proceed to 4th floor',room  : 'same' },
         { id: 3, image: "chan.jpeg", content: "Chan Cabin", name: "ChanCabin", category: "Executive", path : "HB", room : ['HA', 'HB', 'HC', 'HD', 'HE', 'HF', 'HG', 'HH']},
-        { id: 4, image: "prabhu.jpeg", content: "Prabhu Cabin", name: "PrabhuCabin", category: "Executive", path : 'IDK his cabin', room  : 'same'},
+        //{ id: 4, image: "prabhu.jpeg", content: "Prabhu Cabin", name: "PrabhuCabin", category: "Executive", path : 'IDK his cabin', room  : 'same'},
         { id: 5, image: "designer.jpeg", content: "Designers Room", name: "DesignersRoom", category: "Department", path : "BA", room : ['BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK']},
         { id: 6, image: "developers.jpeg", content: "Developers Room", name: "DevelopersRoom", category: "Department", path : "L", room : ['JA', 'JB', 'JC', 'J0', 'AE', 'L', 'LA', 'LB', 'LC', 'AF', 'N', 'P', 'PA', 'PB', 'PC', 'AG', 'R', 'RA', 'RB', 'RC', 'AH', 'AI', 'T', 'TA', 'TB', 'TC', 'W', 'WA', 'WB', 'WC']},
         { id: 7, image: "developers.jpeg", content: "Marketers Room", name: "MarketersRoom", category: "Department", path : "CA", room : ['CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG']},
         { id: 8, image: "conference.jpeg", content: "Conference", name: "Conference", category: "Common Areas", path : "TE", room : ['TD', 'TE', 'TF', 'TG', 'TH', 'TI', 'TJ', 'TK', 'TL', 'TM', 'TN']},
         { id: 9, image: "server.jpeg", content: "Server Room", name: "ServerRoom", category: "Common Areas", path : "O", room : ['O'] },
-        { id: 10, image: "cafe.jpeg", content: "Cafeteria", name: "Cafeteria", category: "Common Areas", path : 'Proceed to 5th floor', room  : 'same' },
+        //{ id: 10, image: "cafe.jpeg", content: "Cafeteria", name: "Cafeteria", category: "Common Areas", path : 'Proceed to 5th floor', room  : 'same' },
         { id: 11, image: "meeting.jpeg", content: "Meeting Room", name: "MeetingRoom", category: "Common Areas", path : 'RF', room : ['RD', 'RE', 'RF', 'RG', 'RH', 'RI', 'RJ', 'RL', 'RK']},
         { id: 12, image: "restroom.jpeg", content: "Rest Room", name: "RestRoom", category: "Common Areas", path : "DC", room : ['DA' ,'DB', 'DC']},
         { id: 13, image: "server.jpeg", content: "PC Room", name: "PCRoom", category: "Common Areas", path : "G", room : ['G']},
@@ -492,7 +492,7 @@ const Nav = () => {
         if (direction !== undefined) {
           direction = (direction + offset + 360) % 360;
           setHeading(direction);
-          if (direction >= 70 && direction <= 72) {
+          if (direction >= 70 && direction <= 80) {
             setcustomarbut(false);
           } else {
             setcustomarbut(true);
