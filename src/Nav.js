@@ -9,6 +9,7 @@ import { transformCoordinatesPath } from './coordiantesTransform.js';
 import { findTurningPoints } from './TurningPoints.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
+
 let selectedContent = {};
  
 const Nav = () => {
@@ -105,6 +106,9 @@ const Nav = () => {
     };
  
     useEffect(() => {
+
+        localStorage.setItem('userLocation','TC')
+        localStorage.setItem('UserPosition','Test')
         
         const userLocationDetected = localStorage.getItem('userLocation');
         setuserLocDetected(userLocationDetected);
@@ -135,18 +139,8 @@ const Nav = () => {
  
         arButtonRef.current = arButton;
  
-        const startAR = () => {
-            arButton.click();
-            setArStarted(true);
-            setShowContainer(true);
-        };
- 
-        const startText = document.querySelector('#start-text');
-        if (startText) {
-            startText.addEventListener('click', startAR);
-        }
- 
         renderer.xr.addEventListener('sessionstart', () => {
+            console.log('stattttt');
             setArStarted(true);
             setShowContainer(true);
         });
@@ -189,10 +183,6 @@ const Nav = () => {
         }, 100);
  
         return () => {
-            mountRef.current.removeChild(renderer.domElement);
-            if (startText) {
-                startText.removeEventListener('click', startAR);
-            }
             clearInterval(positionInterval);
         };
     }, []);
@@ -219,10 +209,7 @@ const Nav = () => {
         { id: 13, image: "server.jpeg", content: "PC Room", name: "PCRoom", category: "Common Areas", path : "G", room : ['G']},
     ];
  
-    const filteredSections = activeButton === 'All'
-        ? sections
-        : sections.filter(section => section.category === activeButton);
- 
+    const filteredSections = activeButton === 'All' ? sections : sections.filter(section => section.category === activeButton);
     const groupedSections = [];
     for (let i = 0; i < filteredSections.length; i += 3) {
         groupedSections.push(filteredSections.slice(i, i + 3));
@@ -492,7 +479,7 @@ const Nav = () => {
         if (direction !== undefined) {
           direction = (direction + offset + 360) % 360;
           setHeading(direction);
-          if (direction >= 70 && direction <= 80) {
+          if (direction >= 80 && direction <= 81) {
             setcustomarbut(false);
           } else {
             setcustomarbut(true);
@@ -674,7 +661,7 @@ const Nav = () => {
                                         <div>You are at {userPosDetected}</div>
                                     </div> */}
                                     {!loop && <button className='custom-ar-button' onClick={eight_loop}>Next</button>}
-                                    {loop && <button className='custom-ar-button' disabled = {customarbut} onClick={enterarbutton}>Start</button>}
+                                    {loop && <button className='custom-ar-button' disabled = {!customarbut} onClick={enterarbutton}>Start</button>}
                                 </div>
                             </>
                         ) : (

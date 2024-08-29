@@ -5,6 +5,7 @@ import Interele from './Interele';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Nav from './Nav';
 import Camera from './camera';
+import Navigation from './Navigation.js';
 
 
 
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path = "/" element = {<Interele />}/>
         <Route path = "/navwebxr" element = {<Nav />}/>
+        <Route path = "/navigation" element = {<Navigation />}/>
         <Route path = "/camera" element = {<Camera />}/>
       </Routes>
     </Router></div>

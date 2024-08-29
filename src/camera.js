@@ -34,10 +34,9 @@ const Camera = () => {
       const constraints = {
         video: {
           facingMode: 'environment',
-          advanced: [{ zoom: 1 }]
+          advanced: [{ zoom: 2 }]
         }
       };
-      //const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -91,6 +90,11 @@ const Camera = () => {
         method: 'POST',
         body: formData,
       });
+
+      // const res = await fetch('https://5e5a-103-13-40-98.ngrok-free.app/upload-video', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
  
       const data = await res.json();
       console.log('Response', data);

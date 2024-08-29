@@ -1,4 +1,5 @@
 export const findTurningPoints = (points) => {
+
     const keys = Object.keys(points);
     const coordinates = Object.values(points);
    
@@ -15,7 +16,7 @@ export const findTurningPoints = (points) => {
             turningPoints.push(keys[i]);
         }
     }
- 
+    
     turningPoints.push(keys[keys.length - 1]);
     return turningPoints;
 };
