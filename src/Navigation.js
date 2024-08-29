@@ -131,8 +131,6 @@ const Navigation = () => {
 
   const initializeARScene = (session) => {
 
-    // localStorage.setItem('userLocation','T')
-    // localStorage.setItem('UserPosition','Test')
     const userLocationDetected = localStorage.getItem('userLocation');
     setuserLocDetected(userLocationDetected);
     const userPositionDetected = localStorage.getItem('UserPosition');
@@ -756,7 +754,7 @@ const Navigation = () => {
                 {loop && (
                   <button
                     className="custom-ar-button"
-                    // disabled={customarbut}
+                    disabled={customarbut}
                     onClick={startAR}
                   >
                     Start

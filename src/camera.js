@@ -90,24 +90,18 @@ const Camera = () => {
         method: 'POST',
         body: formData,
       });
-
-      // const res = await fetch('https://5e5a-103-13-40-98.ngrok-free.app/upload-video', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
  
       const data = await res.json();
       console.log('Response', data);
       const placeDetected = data.matches;
       if(placeDetected === 0){
-        console.log("poda")
         setRetake(true)
       }else{
         const userRoom = data.userRoom;
         console.log('detectedPlaces',placeDetected)
         localStorage.setItem('userLocation',placeDetected)
         localStorage.setItem('UserPosition',userRoom)
-        navigate("/navwebxr");
+        navigate("/navigation");
       }
  
     } catch (error) {
@@ -142,8 +136,8 @@ const Camera = () => {
   
  
   return (
-    <div className='app'>
-      <video className="video-background" ref={videoRef} autoPlay></video>
+    <div className='appCamera'>
+      <video className="video-background-camera" ref={videoRef} autoPlay></video>
       {message && 
         <div className='message-container'>
           <div className='message'>Hold your phone straight and record a video of your surrounding avoid facing direct walls.</div>
@@ -174,7 +168,7 @@ const Camera = () => {
         <div className="loading-overlay">
           <div className="loading-content">
             <div className="spinner"></div>
-            <div className="loading-message">localizing</div>
+            <div className="loading-message">please don't move while localizing..</div>
           </div>
         </div>
       )}

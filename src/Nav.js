@@ -55,7 +55,7 @@ const Nav = () => {
         marginTop: '20px',
     };
  
-    const speakTurnDirection = (direction) => {
+    const speakTurnDirection = (direction) => { 
         if ('speechSynthesis' in window && navigationStarted) {
             const utterance = new SpeechSynthesisUtterance();
             switch(direction) {
@@ -106,9 +106,6 @@ const Nav = () => {
     };
  
     useEffect(() => {
-
-        localStorage.setItem('userLocation','TC')
-        localStorage.setItem('UserPosition','Test')
         
         const userLocationDetected = localStorage.getItem('userLocation');
         setuserLocDetected(userLocationDetected);
@@ -140,7 +137,6 @@ const Nav = () => {
         arButtonRef.current = arButton;
  
         renderer.xr.addEventListener('sessionstart', () => {
-            console.log('stattttt');
             setArStarted(true);
             setShowContainer(true);
         });
