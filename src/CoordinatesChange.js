@@ -16,7 +16,7 @@ export const CoordinatesChange = (originaldPath, cameradAngles) =>{
     }
     
     function adjustPath(path, actualAngle) {
-        const targetAngle = 75;
+        const targetAngle = 80;
         const adjustmentAngle = targetAngle - actualAngle;
         
         const adjustedPath = path.map(([x, y]) => rotatePoint(x, y, adjustmentAngle));

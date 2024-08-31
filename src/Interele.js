@@ -1,14 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import './Interele.css';
 
 const Interele = () => {
 
-    const navigate = useNavigate();
-
-    const Openarjs = () =>{
-        navigate ("/navigation");
-    }
+  const navigate = useNavigate();
+  const Openarjs = () =>{
+    navigate ("/camera");
+  }
 
   return (
     <div className='landing-container' style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>

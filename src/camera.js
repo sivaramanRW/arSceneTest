@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './camera.css'
+import './camera.css';
 import { useNavigate } from 'react-router-dom';
- 
+
 const Camera = () => {
   const videoRef = useRef(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -12,11 +12,15 @@ const Camera = () => {
   const [retake, setRetake] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     startCamera();
+    // Cleanup on component unmount
+    return () => {
+      stopCamera();
+    };
   }, []);
- 
+
   useEffect(() => {
     let interval;
     if (isRecording) {
@@ -28,7 +32,7 @@ const Camera = () => {
     }
     return () => clearInterval(interval);
   }, [isRecording]);
- 
+
   const startCamera = async () => {
     try {
       const constraints = {
@@ -45,102 +49,105 @@ const Camera = () => {
       console.error('Error accessing camera:', error);
     }
   };
- 
+
+  const stopCamera = () => {
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+  };
+
   const startRecording = () => {
     if (videoRef.current.srcObject) {
       setMessage(false);
       const stream = videoRef.current.srcObject;
       const recorder = new MediaRecorder(stream);
- 
+
       const chunks = [];
       recorder.ondataavailable = (event) => {
         chunks.push(event.data);
       };
- 
+
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'video/mp4' });
         const url = URL.createObjectURL(blob);
         setVideoURL(url);
       };
- 
+
       recorder.start();
       setMediaRecorder(recorder);
       setIsRecording(true);
     }
   };
- 
+
   const stopRecording = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
       setIsRecording(false);
     }
   };
- 
+
   const uploadVideo = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       const response = await fetch(videoURL);
       const blob = await response.blob();
       const file = new File([blob], 'video.mp4', { type: 'video/mp4' });
- 
+
       const formData = new FormData();
       formData.append('file', file);
- 
-      const res = await fetch('http://localhost:8000/upload-video', {
+
+      // const res = await fetch('http://localhost:8000/upload-video', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+      const res = await fetch('https://8edf-2405-201-e031-d1a1-3d15-4b7f-698-d7b9.ngrok-free.app/upload-video', {
         method: 'POST',
         body: formData,
       });
- 
+
       const data = await res.json();
       console.log('Response', data);
       const placeDetected = data.matches;
-      if(placeDetected === 0){
-        setRetake(true)
-      }else{
+      if (placeDetected === 0) {
+        setRetake(true);
+      } else {
         const userRoom = data.userRoom;
-        console.log('detectedPlaces',placeDetected)
-        localStorage.setItem('userLocation',placeDetected)
-        localStorage.setItem('UserPosition',userRoom)
-        navigate("/navigation");
+        console.log('detectedPlaces', placeDetected);
+        const located = { 'userLocDetected': placeDetected, 'userPosDetected': userRoom };
+        stopCamera();
+        navigate("/navwebxr", { state: located });
       }
- 
+
     } catch (error) {
       console.error('Error uploading video:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
-  
-  const retake_video = () => {
 
+  const retake_video = () => {
     if (mediaRecorder && isRecording) {
       mediaRecorder.stop();
       setIsRecording(false);
     }
-  
-    if (videoRef.current) {
-      const stream = videoRef.current.srcObject;
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-      }
-      videoRef.current.srcObject = null;
-    }
-  
+
+    stopCamera();
     setVideoURL('');
     setMessage(true);
     setRetake(false);
     setRecordingTime(0);
     startCamera();
   };
-  
- 
+
   return (
     <div className='appCamera'>
       <video className="video-background-camera" ref={videoRef} autoPlay></video>
       {message && 
         <div className='message-container'>
-          <div className='message'>Hold your phone straight and record a video of your surrounding avoid facing direct walls.</div>
+          <div className='message'>Hold your phone straight and record a video of your surroundings, avoid facing direct walls.</div>
         </div>
       }
       {retake &&
@@ -168,12 +175,12 @@ const Camera = () => {
         <div className="loading-overlay">
           <div className="loading-content">
             <div className="spinner"></div>
-            <div className="loading-message">please don't move while localizing..</div>
+            <div className="loading-message">Please don't move while localizing...</div>
           </div>
         </div>
       )}
     </div>
   );
 };
- 
+
 export default Camera;

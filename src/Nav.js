@@ -8,6 +8,7 @@ import { transformCoordinatesPath } from './coordiantesTransform.js';
 import { findTurningPoints } from './TurningPoints.js';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { CoordinatesChange } from './CoordinatesChange.js';
+import { useLocation } from 'react-router-dom';
 import './Nav.css';
 
 let selectedContent = {};
@@ -15,6 +16,8 @@ let count = 0;
 
 const Nav = () => {
 
+  const location = useLocation();
+  const { userLocDetected, userPosDetected} = location.state || {}
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -26,8 +29,6 @@ const Nav = () => {
   const [messageBack, setMessage] = useState('');
   const [arStarted, setArStarted] = useState(false);
   const [distance, setDistance] = useState(0);
-  const [userLocDetected, setuserLocDetected] = useState('');
-  const [userPosDetected, setuserPosDetected] = useState('');
   const [customarbut, setcustomarbut] = useState(true);
   const [userPosition, setUserPosition] = useState({ x: 0, y: 0, z: 0 });
   const [foundPathPoints, setFoundPathPoints] = useState([]);
@@ -131,10 +132,8 @@ const Nav = () => {
 
   const initializeARScene = (session) => {
 
-    const userLocationDetected = localStorage.getItem('userLocation');
-    setuserLocDetected(userLocationDetected);
-    const userPositionDetected = localStorage.getItem('UserPosition');
-    setuserPosDetected(userPositionDetected);
+    console.log('loc',userLocDetected);
+    console.log('pos',userPosDetected);
 
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -578,12 +577,10 @@ const Nav = () => {
   
         {showContainer && (
           <div className="container">
+            <div>{heading.toFixed(0)}</div>
             <div className="header">
               <div className="title-line">
                 <h2 className="title">Explore</h2>
-                <div className="close-icon" onClick={handleCloseClick}>
-                  <FaTimes />
-                </div>
               </div>
               <div className="subtitle">
                 <h2>RandomWalk</h2>
