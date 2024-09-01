@@ -582,6 +582,21 @@
   font-weight: bold;
 }
 
+.floor-map-container{
+  border: 1px solid red;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  place-items: center;
+}
+
+.floor-map {
+  transform: perspective(300px) rotateX(70deg) rotateY(-20deg);
+  transform-style: preserve-3d;
+}
+
+
  
 
 

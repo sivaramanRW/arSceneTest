@@ -103,7 +103,7 @@ const Camera = () => {
       //   method: 'POST',
       //   body: formData,
       // });
-      const res = await fetch('https://8edf-2405-201-e031-d1a1-3d15-4b7f-698-d7b9.ngrok-free.app/upload-video', {
+      const res = await fetch('https://7cbd-2405-201-e031-d1a1-9047-19a3-4f70-fdce.ngrok-free.app/upload-video', {
         method: 'POST',
         body: formData,
       });

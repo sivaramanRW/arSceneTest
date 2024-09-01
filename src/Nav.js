@@ -10,6 +10,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { CoordinatesChange } from './CoordinatesChange.js';
 import { useLocation } from 'react-router-dom';
 import './Nav.css';
+import MapModel from './MapModel.js'; 
 
 let selectedContent = {};
 let count = 0;
@@ -29,7 +30,6 @@ const Nav = () => {
   const [messageBack, setMessage] = useState('');
   const [arStarted, setArStarted] = useState(false);
   const [distance, setDistance] = useState(0);
-  const [customarbut, setcustomarbut] = useState(true);
   const [userPosition, setUserPosition] = useState({ x: 0, y: 0, z: 0 });
   const [foundPathPoints, setFoundPathPoints] = useState([]);
   const [visiblePathPoints, setVisiblePathPoints] = useState([]);
@@ -231,12 +231,6 @@ const Nav = () => {
   for (let i = 0; i < filteredSections.length; i += 3) {
     groupedSections.push(filteredSections.slice(i, i + 3));
   }
-  
-  const handleCloseClick = () => {
-    setShowContainer(false);
-    const newTab = window.open('about:blank', '_self');
-    newTab.open();
-  };
   
   const handleCloseClickTwo = () => {
     setFloor(true);
@@ -669,7 +663,10 @@ const Nav = () => {
       </>
     ) : (
       <div className="landing-container" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)',}}>
-         <button className="custom-ar-button" disabled={!customarbut} onClick={startAR}> Start</button>
+         <div className='floor-map-container'>
+           <MapModel />
+         </div>
+         <button className="custom-ar-button" onClick={startAR}> Start</button>
       </div>
     )}
   </div>
