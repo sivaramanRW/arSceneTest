@@ -1,51 +1,59 @@
 import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'; 
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './MapModel.css';
+import { userData } from 'three/webgpu';
 
 const FloorMap = () => {
+
   const containerRef = useRef(null);
+  const modelRef = useRef(null);
 
   useEffect(() => {
+
     const container = containerRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0, 5, 10);
 
-    
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0xffffff, 1);
-    container.appendChild(renderer.domElement); 
+    container.appendChild(renderer.domElement);
 
     
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; 
+    controls.enableDamping = true;
     controls.dampingFactor = 0.25;
     controls.screenSpacePanning = false;
-    controls.minDistance = 1; 
+    controls.minDistance = 1;
     controls.maxDistance = 100;
 
-    
     const loader = new GLTFLoader();
     loader.load('floor3d.glb', function (gltf) {
+
       const model = gltf.scene;
       scene.add(model);
+      
+      const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 1);
+      const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
+      dot1.position.set(0, 0.6, 0); 
+      dot1.rotation.y = Math.PI / 4;
+      model.add(dot1);
+
     }, undefined, function (error) {
       console.error(error);
     });
 
-    
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
-    
     
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0, 1, 1).normalize();
     scene.add(directionalLight);
 
-    
     const animate = function () {
       requestAnimationFrame(animate);
       controls.update();
@@ -61,18 +69,19 @@ const FloorMap = () => {
     };
 
     window.addEventListener('resize', onWindowResize);
+
     return () => {
       window.removeEventListener('resize', onWindowResize);
       container.removeChild(renderer.domElement);
       renderer.dispose();
-      controls.dispose(); 
+      controls.dispose();
     };
+
+    
   }, []);
 
   return (
-    <div className='floor-map-containers' ref={containerRef}>
-      
-    </div>
+    <div className='floor-map-containers' ref={containerRef}></div>
   );
 };
 
