@@ -121,16 +121,18 @@ const FloorMap = ({ path }) => {
   for(let i = 0; i < InterKeys.length; i++){
     ModelPathTemp.push(modelApla[InterKeys[i]]);
   }
+  const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
+
   
   const model = () => {
 
     setButton(false);
-    console.log('gg',ModelPathTemp);
+    console.log('gg',convertedCoordinates);
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(userPos[0], 5, userPos[1]);
+    camera.position.set(8, 5, 8);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
@@ -138,8 +140,7 @@ const FloorMap = ({ path }) => {
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0, 1, 1).normalize();
     scene.add(directionalLight);
-
-  
+    
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
@@ -159,10 +160,22 @@ const FloorMap = ({ path }) => {
 
       const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
       const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      
+      for(let i  = 0; i < convertedCoordinates.length; i++){
+        const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
+        dot1.position.set(convertedCoordinates[i][0], 0.6, convertedCoordinates[i][1]);
+        model.add(dot1);
+      }
 
-      const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
-      dot1.position.set(userPos[0], 0.6, userPos[1]);
-      model.add(dot1);
+      for(let j = 0; j < convertedCoordinates.length-1; j++){
+        const pointA = new THREE.Vector3(convertedCoordinates[j][0], 0.6, convertedCoordinates[j][1]);
+        const pointB = new THREE.Vector3(convertedCoordinates[j+1][0], 0.6, convertedCoordinates[j+1][1]);
+        const geometry = new THREE.BufferGeometry().setFromPoints([pointA, pointB]);
+        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+        const line = new THREE.Line(geometry, material);
+        model.add(line);
+      }
+    
     }, undefined, function (error) {
       console.error(error);
     });

@@ -38,7 +38,7 @@ const Camera = () => {
       const constraints = {
         video: {
           facingMode: 'environment',
-          advanced: [{ zoom: 2 }]
+          advanced: [{ zoom: 1 }]
         }
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
