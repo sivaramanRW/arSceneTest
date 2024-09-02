@@ -11,9 +11,10 @@ import { CoordinatesChange } from './CoordinatesChange.js';
 import { useLocation } from 'react-router-dom';
 import './Nav.css';
 import MapModel from './MapModel.js'; 
+import PathModel from './PathModel.js';
 
 let selectedContent = {};
-let modelPath = {};
+let modelPath = [];
 let count = 0;
 
 const Nav = () => {
@@ -45,6 +46,7 @@ const Nav = () => {
   const [heading, setHeading] = useState(0);
   const [headingStored, setHeadingStored] = useState(false);
   const [offset, setOffset] = useState(0);
+  const [mapView, setmapView] = useState(false);
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -531,6 +533,13 @@ const Nav = () => {
     }
   };
 
+  const showMap = () => {
+    setmapView(true);
+  }
+  const hideMap = () => {
+    setmapView(false);
+  }
+
   return (
   <div ref={mountRef} className='app'>
     {arStarted ? (
@@ -632,8 +641,21 @@ const Nav = () => {
             </div>
           </div>
         )}
-  
-        {!showContainer && showBottomSection && (
+
+        {mapView && 
+        <div className='map-container'>
+          <div className="close-icon-two" onClick={hideMap}><FaTimes /></div>
+          <PathModel path = {modelPath}/>
+        </div>
+        }
+
+        {showBottomSection && !showContainer && !mapView &&
+         <div className='map-close-icon' onClick={showMap}>
+          <img className = "map-icon" src='map.png' alt = "map_icon"></img>
+         </div>
+        }
+
+        {!showContainer && showBottomSection && !mapView &&(
           <div className="bottom-section">
             <div className="close-icon-two" onClick={handleCloseClickTwo}>
               <FaTimes />

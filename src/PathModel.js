@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './MapModel.css';
 import { useState } from 'react';
 import userEvent from '@testing-library/user-event';
+import { findTurningPoints } from './TurningPoints';
 
 const FloorMap = ({ path }) => {
 
@@ -100,13 +101,31 @@ const FloorMap = ({ path }) => {
     "AG": [0.1, -6]
   };
 
+  const labels = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+
+  const transformCoordinates = (coords, labels) => {
+    const transformed = {};
+    coords.forEach((coord, index) => {
+      transformed[labels[index]] = { x: coord[0], y: coord[1] };
+    });
+    return transformed;
+  };
+
+  const ModelPathTemp = [];
   const containerRef = useRef(null);
   const [button, setButton] = useState(true);
   let userPos = modelCoordinates[path];
-
+  const pathCoordinates = path.map(point => modelCoordinates[point]);
+  const modelApla = transformCoordinates(pathCoordinates, labels);
+  const InterKeys = findTurningPoints(modelApla);
+  for(let i = 0; i < InterKeys.length; i++){
+    ModelPathTemp.push(modelApla[InterKeys[i]]);
+  }
+  
   const model = () => {
+
     setButton(false);
-    console.log('map', path);
+    console.log('gg',ModelPathTemp);
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
