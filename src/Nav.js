@@ -13,6 +13,7 @@ import './Nav.css';
 import MapModel from './MapModel.js'; 
 
 let selectedContent = {};
+let modelPath = {};
 let count = 0;
 
 const Nav = () => {
@@ -276,10 +277,11 @@ const Nav = () => {
         setFloor(false);
         setMessage('You are at ' + selectedContent.content);
       } else {
+
         const [foundPath, totalDistance] = dijkstra(graph, userLocDetected, selectedContent.path);
         console.log('Found Path', foundPath);
         console.log('Distance', totalDistance);
-           
+        modelPath = foundPath;
         const foundPathPointsTemp = foundPath.map(point => coordinates[point]);
         console.log('Path points', foundPathPointsTemp);
         const transformed = transformCoordinates(foundPathPointsTemp, labels);
@@ -664,7 +666,7 @@ const Nav = () => {
     ) : (
       <div className="landing-container" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)',}}>
          <div className='floor-map-container'>
-           <MapModel />
+           <MapModel path = {userLocDetected} />
          </div>
          <button className="custom-ar-button" onClick={startAR}> Start</button>
       </div>

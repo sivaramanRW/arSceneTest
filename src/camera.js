@@ -99,14 +99,15 @@ const Camera = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      // const res = await fetch('http://localhost:8000/upload-video', {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-      const res = await fetch('https://7cbd-2405-201-e031-d1a1-9047-19a3-4f70-fdce.ngrok-free.app/upload-video', {
+      const res = await fetch('http://localhost:8000/upload-video', {
         method: 'POST',
         body: formData,
       });
+      
+      // const res = await fetch('https://f009-103-13-40-98.ngrok-free.app/upload-video', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
 
       const data = await res.json();
       console.log('Response', data);
