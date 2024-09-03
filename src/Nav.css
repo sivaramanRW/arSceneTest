@@ -609,8 +609,8 @@
   right: 1px;
   cursor: pointer;
   background-color: grey;
-  height: 30px;
-  width: 30px;
+  height: 35px;
+  width: 35px;
   border-radius: 50%;
   margin-top: 10px;
   margin-right: 10px;
@@ -618,9 +618,10 @@
   place-items: center;
   justify-content: center;
 }
+
 .map-icon{
-  height: 15px;
-  width: 15px;
+  height: 20px;
+  width: 20px;
 }
 
 .map-container {

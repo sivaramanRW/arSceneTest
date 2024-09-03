@@ -174,7 +174,9 @@ const FloorMap = ({ path }) => {
 
   return (
     <div className='floor-map-containers' ref={containerRef}>
-      {button && <button onClick={model}>Map</button>}
+      <div className='map-close-icon-path' onClick={model}>
+        <img className = "map-icon-path" src='map.png' alt = "map_icon"></img>
+      </div>
     </div>
   );
 };

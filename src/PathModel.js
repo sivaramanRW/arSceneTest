@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import './MapModel.css';
+import './PathModel.css';
 import { useState } from 'react';
 import userEvent from '@testing-library/user-event';
 import { findTurningPoints } from './TurningPoints';
@@ -205,7 +205,7 @@ const FloorMap = ({ path }) => {
   }
 
   return (
-    <div className='floor-map-containers' ref={containerRef}>
+    <div className='path-map-containers' ref={containerRef}>
       {button && <button onClick={model}>Map</button>}
     </div>
   );

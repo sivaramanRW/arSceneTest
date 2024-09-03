@@ -687,9 +687,10 @@ const Nav = () => {
       </>
     ) : (
       <div className="landing-container" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)',}}>
-         <div className='floor-map-container'>
-           <MapModel path = {userLocDetected} />
-         </div>
+        
+          <div className='floor-map-container'>
+          <MapModel path = {userLocDetected} />
+        </div>
          <button className="custom-ar-button" onClick={startAR}> Start</button>
       </div>
     )}
