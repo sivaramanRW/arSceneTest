@@ -11,7 +11,7 @@ import { CoordinatesChange } from './CoordinatesChange.js';
 import { useLocation } from 'react-router-dom';
 import './Nav.css';
 import MapModel from './MapModel.js'; 
-import PathModel from './PathModel.js';
+import PathModel from './PathModel.js'; 
 
 let selectedContent = {};
 let modelPath = [];
@@ -20,7 +20,9 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  const { userLocDetected, userPosDetected} = location.state || {}
+  // const { userLocDetected, userPosDetected} = location.state || {}
+  const userLocDetected = 'TB';
+  const userPosDetected = "rooms";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -532,7 +534,7 @@ const Nav = () => {
       window.removeEventListener('deviceorientationabsolute', handleOrientation);
     }
   };
-
+  
   const showMap = () => {
     setmapView(true);
   }
@@ -687,8 +689,7 @@ const Nav = () => {
       </>
     ) : (
       <div className="landing-container" style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)',}}>
-        
-          <div className='floor-map-container'>
+        <div className='floor-map-container'>
           <MapModel path = {userLocDetected} />
         </div>
          <button className="custom-ar-button" onClick={startAR}> Start</button>

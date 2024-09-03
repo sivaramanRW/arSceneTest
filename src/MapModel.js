@@ -1,13 +1,11 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './MapModel.css';
-import { useState } from 'react';
-import userEvent from '@testing-library/user-event';
+import { FaTimes } from 'react-icons/fa';
 
 const FloorMap = ({ path }) => {
-
   const modelCoordinates = {
     "BF": [0.1, 13],
     "BG": [-1, 13],
@@ -101,26 +99,29 @@ const FloorMap = ({ path }) => {
   };
 
   const containerRef = useRef(null);
-  const [button, setButton] = useState(true);
-  let userPos = modelCoordinates[path];
+  const [modelVisible, setModelVisible] = useState(false);
+  const userPos = modelCoordinates[path];
 
-  const model = () => {
-    setButton(false);
-    console.log('map', path);
+  useEffect(() => {
+    if (!modelVisible) return; 
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      70,
+      container.clientWidth / container.clientHeight,
+      0.1,
+      1000
+    );
     camera.position.set(userPos[0], 5, userPos[1]);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
-    
+
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0, 1, 1).normalize();
     scene.add(directionalLight);
 
-  
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
@@ -133,20 +134,26 @@ const FloorMap = ({ path }) => {
     controls.minDistance = 1;
     controls.maxDistance = 100;
 
+    let model;
     const loader = new GLTFLoader();
-    loader.load('floor3d.glb', function (gltf) {
-      const model = gltf.scene;
-      scene.add(model);
+    loader.load(
+      'floor3d.glb',
+      function (gltf) {
+        model = gltf.scene;
+        scene.add(model);
 
-      const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-      const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
 
-      const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
-      dot1.position.set(userPos[0], 0.6, userPos[1]);
-      model.add(dot1);
-    }, undefined, function (error) {
-      console.error(error);
-    });
+        const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
+        dot1.position.set(userPos[0], 0.6, userPos[1]);
+        model.add(dot1);
+      },
+      undefined,
+      function (error) {
+        console.error(error);
+      }
+    );
 
     const animate = function () {
       requestAnimationFrame(animate);
@@ -170,13 +177,19 @@ const FloorMap = ({ path }) => {
       renderer.dispose();
       controls.dispose();
     };
-  }
+  }, [path, userPos, modelVisible]); 
+
+  const toggleModel = () => {
+    setModelVisible(!modelVisible);
+  };
 
   return (
-    <div className='floor-map-containers' ref={containerRef}>
-      <div className='map-close-icon-path' onClick={model}>
-        <img className = "map-icon-path" src='map.png' alt = "map_icon"></img>
-      </div>
+    <div className="floor-map-container">
+      <div className="main-content" ref={containerRef} style={{ display: modelVisible ? 'block' : 'none' }}></div>
+      {!modelVisible && <div className="text-message">Face your phone camera towards the floor and click start</div>}
+      <button className="toggle-button" onClick={toggleModel}>
+        {modelVisible ? <FaTimes />:  <img src = "map.png" alt = "mapicon" style={{height : "20px", width : "20px"}}></img>}
+      </button>
     </div>
   );
 };

@@ -124,7 +124,7 @@ const FloorMap = ({ path }) => {
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
 
   
-  const model = () => {
+  useEffect(() => {
 
     setButton(false);
     console.log('gg',convertedCoordinates);
@@ -202,12 +202,10 @@ const FloorMap = ({ path }) => {
       renderer.dispose();
       controls.dispose();
     };
-  }
+  },[]);
 
   return (
-    <div className='path-map-containers' ref={containerRef}>
-      {button && <button onClick={model}>Map</button>}
-    </div>
+    <div className='path-map-containers' ref={containerRef}></div>
   );
 };
 
