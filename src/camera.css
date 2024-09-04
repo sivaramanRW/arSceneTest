@@ -1,0 +1,234 @@
+.appCamera {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+ 
+.video-background-camera {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  transform: scale(1);
+}
+ 
+.bottom-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+ 
+.photo-preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+ 
+.preview-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin: 0 5px;
+  border: 2px solid white;
+  border-radius: 5px;
+}
+ 
+.capture-main {
+  padding: 20px;
+  display: flex;
+  place-items: center;
+  justify-content: center;
+}
+ 
+.capture-but {
+  height: 60px;
+  width: 60px;
+  background-color: #0000FF;
+  border-radius: 50%;
+  display: flex;
+  place-items: center;
+  justify-content: center;
+}
+ 
+.camIcon {
+  height: 50%;
+  width: 50%;
+}
+ 
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+ 
+.loading-content {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+ 
+.spinner {
+  border: 0px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+ 
+.loading-message {
+  font-size: 16px;
+  color: #333;
+}
+ 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+ 
+.message-container{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  place-items: center;
+}
+ 
+.message{
+  height: 20%;
+  width : 85%;
+  display: flex;
+  justify-content: center;
+  place-items: center;
+  border-radius: 20px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding-left: 10px;
+  padding-right: 10px;
+}
+ 
+.controls-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+ 
+.recording-indicator-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+ 
+.recording-indicator {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+  margin-right: 10px;
+}
+ 
+.recording-timer {
+  color: white;
+  font-size: 18px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+ 
+.button-section {
+  display: flex;
+  place-items: center;
+  justify-content: center;
+}
+ 
+.start-record, .stop-record {
+  height: 45px;
+  width: 150px;
+  background: linear-gradient(100deg, #BABDFF 0%, #5A60FD 100%);
+  box-shadow: 0px 8px 12px -4px rgba(33, 34, 253, 0.32);
+  border-radius: 10px;
+  display: flex;
+  place-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: aliceblue;
+  font-weight: bold;
+  border: none;
+}
+ 
+.start-localizing {
+  height: 45px;
+  width: 150px;
+  background: linear-gradient(100deg, hsl(51, 100%, 50%) 0%, #FFA500 100%);
+  box-shadow: 0px 8px 12px -4px rgba(255, 165, 0, 0.32);
+  border-radius: 10px;
+  display: flex;
+  place-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  color: #333;
+  font-weight: bold;
+  border: none;
+}
+ 
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
+}
+
+@media screen and (max-device-width: 568px), screen and (-webkit-min-device-pixel-ratio: 2) {
+  .button-section button {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+}
+
+@viewport {
+  width: device-width;
+  zoom: 1.0;
+  min-zoom: 1.0;
+  max-zoom: 1.0;
+  user-scalable: no;
+}
