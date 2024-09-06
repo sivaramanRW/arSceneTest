@@ -103,7 +103,7 @@ const FloorMap = ({ path }) => {
   const userPos = modelCoordinates[path];
 
   useEffect(() => {
-    if (!modelVisible) return; 
+    if (!modelVisible) return;
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
@@ -136,18 +136,26 @@ const FloorMap = ({ path }) => {
 
     let model;
     const loader = new GLTFLoader();
+    
     loader.load(
       'floor3d.glb',
       function (gltf) {
         model = gltf.scene;
         scene.add(model);
 
-        const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-        const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-
-        const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
-        dot1.position.set(userPos[0], 0.6, userPos[1]);
-        model.add(dot1);
+        loader.load(
+          'youherered.glb',
+          function (gltfMarker) {
+            const markerModel = gltfMarker.scene;
+            markerModel.scale.set(0.5, 0.5, 0.5);
+            markerModel.position.set(userPos[0], 0.6, userPos[1]);
+            model.add(markerModel);
+          },
+          undefined,
+          function (error) {
+            console.error(error);
+          }
+        );
       },
       undefined,
       function (error) {
@@ -177,7 +185,7 @@ const FloorMap = ({ path }) => {
       renderer.dispose();
       controls.dispose();
     };
-  }, [path, userPos, modelVisible]); 
+  }, [path, userPos, modelVisible]);
 
   const toggleModel = () => {
     setModelVisible(!modelVisible);
@@ -188,7 +196,7 @@ const FloorMap = ({ path }) => {
       <div className="main-content" ref={containerRef} style={{ display: modelVisible ? 'block' : 'none' }}></div>
       {!modelVisible && <div className="text-message">Face your phone camera towards the floor and click start</div>}
       <button className="toggle-button" onClick={toggleModel}>
-        {modelVisible ? <FaTimes />:  <img src = "map.png" alt = "mapicon" style={{height : "20px", width : "20px"}}></img>}
+        {modelVisible ? <FaTimes /> : <img src="map.png" alt="mapicon" style={{ height: '20px', width: '20px' }} />}
       </button>
     </div>
   );

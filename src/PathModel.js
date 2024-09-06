@@ -4,7 +4,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './PathModel.css';
 import { useState } from 'react';
-import userEvent from '@testing-library/user-event';
 import { findTurningPoints } from './TurningPoints';
 
 const FloorMap = ({ path }) => {
@@ -118,29 +117,29 @@ const FloorMap = ({ path }) => {
   const pathCoordinates = path.map(point => modelCoordinates[point]);
   const modelApla = transformCoordinates(pathCoordinates, labels);
   const InterKeys = findTurningPoints(modelApla);
-  for(let i = 0; i < InterKeys.length; i++){
+  for (let i = 0; i < InterKeys.length; i++) {
     ModelPathTemp.push(modelApla[InterKeys[i]]);
   }
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
 
-  
+
   useEffect(() => {
 
     setButton(false);
-    console.log('gg',convertedCoordinates);
+    console.log('gg', convertedCoordinates);
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(70, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(8, 5, 8);
+    const camera = new THREE.PerspectiveCamera(110, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(convertedCoordinates[0][0], 0.6, convertedCoordinates[0][1]);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
-    
+
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.position.set(0, 1, 1).normalize();
     scene.add(directionalLight);
-    
+
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setClearColor(0x000000, 0);
@@ -153,6 +152,36 @@ const FloorMap = ({ path }) => {
     controls.minDistance = 1;
     controls.maxDistance = 100;
 
+    const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1])
+    const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1])
+    console.log('first', firstPoint);
+    console.log('next', nextPoint);
+
+    if(firstPoint.x - nextPoint.x === 0){
+      console.log('chnage z')
+      if(firstPoint.z > nextPoint.z){
+        controls.target.set(firstPoint.x, 0, firstPoint.z - 0.5);
+      }else{
+        controls.target.set(firstPoint.x, 0, firstPoint.z + 0.5);
+      }
+    }else if(firstPoint.z - nextPoint.z === 0){
+      console.log('chnage x')
+      if(firstPoint.x > nextPoint.x){
+        controls.target.set(firstPoint.x - 0.5, 0, firstPoint.z);
+      }else{
+        controls.target.set(firstPoint.x + 0.5, 0, firstPoint.z);
+      }
+    }else{
+      console.log('something')
+      let distance = 0.5;
+      let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
+      let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
+      let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
+      let movement = [unitVector[0] * distance, unitVector[1] * distance];
+      let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
+      controls.target.set(newPosition[0], 0, newPosition[1])
+    }
+
     const loader = new GLTFLoader();
     loader.load('floor3d.glb', function (gltf) {
       const model = gltf.scene;
@@ -160,23 +189,23 @@ const FloorMap = ({ path }) => {
 
       const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
       const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-      
-      for(let i  = 0; i < convertedCoordinates.length; i++){
+
+      for (let i = 0; i < convertedCoordinates.length; i++) {
         const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
         dot1.position.set(convertedCoordinates[i][0], 0.6, convertedCoordinates[i][1]);
         model.add(dot1);
       }
 
-      for(let j = 0; j < convertedCoordinates.length-1; j++){
+      for (let j = 0; j < convertedCoordinates.length - 1; j++) {
         const pointA = new THREE.Vector3(convertedCoordinates[j][0], 0.6, convertedCoordinates[j][1]);
-        const pointB = new THREE.Vector3(convertedCoordinates[j+1][0], 0.6, convertedCoordinates[j+1][1]);
+        const pointB = new THREE.Vector3(convertedCoordinates[j + 1][0], 0.6, convertedCoordinates[j + 1][1]);
         const geometry = new THREE.BufferGeometry().setFromPoints([pointA, pointB]);
         const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
         const line = new THREE.Line(geometry, material);
         model.add(line);
       }
-    
-    }, undefined, function (error) {
+
+    }, undefined, function (error) {  
       console.error(error);
     });
 
@@ -202,7 +231,7 @@ const FloorMap = ({ path }) => {
       renderer.dispose();
       controls.dispose();
     };
-  },[]);
+  }, []);
 
   return (
     <div className='path-map-containers' ref={containerRef}></div>

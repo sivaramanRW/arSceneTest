@@ -21,7 +21,7 @@ const Nav = () => {
 
   const location = useLocation();
   // const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = 'TB';
+  const userLocDetected = 'RK';
   const userPosDetected = "rooms";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -226,7 +226,7 @@ const Nav = () => {
     { id: 8, image: "conference.jpeg", content: "Conference", name: "Conference", category: "Common Areas", path : "TE", room : ['TD', 'TE', 'TF', 'TG', 'TH', 'TI', 'TJ', 'TK', 'TL', 'TM', 'TN']},
     { id: 9, image: "server.jpeg", content: "Server Room", name: "ServerRoom", category: "Common Areas", path : "O", room : ['O'] },
     //{ id: 10, image: "cafe.jpeg", content: "Cafeteria", name: "Cafeteria", category: "Common Areas", path : 'Proceed to 5th floor', room  : 'same' },
-    { id: 11, image: "meeting.jpeg", content: "Meeting Room", name: "MeetingRoom", category: "Common Areas", path : 'RF', room : ['RD', 'RE', 'RF', 'RG', 'RH', 'RI', 'RJ', 'RL', 'RK']},
+    { id: 11, image: "meeting.jpeg", content: "Sales and Marketing Room", name: "MeetingRoom", category: "Common Areas", path : 'RF', room : ['RD', 'RE', 'RF', 'RG', 'RH', 'RI', 'RJ', 'RL', 'RK']},
     { id: 12, image: "restroom.jpeg", content: "Rest Room", name: "RestRoom", category: "Common Areas", path : "DC", room : ['DA' ,'DB', 'DC']},
     { id: 13, image: "server.jpeg", content: "PC Room", name: "PCRoom", category: "Common Areas", path : "G", room : ['G']},
   ];

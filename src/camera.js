@@ -15,7 +15,6 @@ const Camera = () => {
 
   useEffect(() => {
     startCamera();
-    // Cleanup on component unmount
     return () => {
       stopCamera();
     };
