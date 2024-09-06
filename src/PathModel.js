@@ -154,34 +154,15 @@ const FloorMap = ({ path }) => {
 
     const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1])
     const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1])
-    console.log('first', firstPoint);
-    console.log('next', nextPoint);
-
-    if(firstPoint.x - nextPoint.x === 0){
-      console.log('chnage z')
-      if(firstPoint.z > nextPoint.z){
-        controls.target.set(firstPoint.x, 0, firstPoint.z - 0.5);
-      }else{
-        controls.target.set(firstPoint.x, 0, firstPoint.z + 0.5);
-      }
-    }else if(firstPoint.z - nextPoint.z === 0){
-      console.log('chnage x')
-      if(firstPoint.x > nextPoint.x){
-        controls.target.set(firstPoint.x - 0.5, 0, firstPoint.z);
-      }else{
-        controls.target.set(firstPoint.x + 0.5, 0, firstPoint.z);
-      }
-    }else{
-      console.log('something')
-      let distance = 0.5;
-      let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
-      let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
-      let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
-      let movement = [unitVector[0] * distance, unitVector[1] * distance];
-      let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
-      controls.target.set(newPosition[0], 0, newPosition[1])
-    }
-
+   
+    let distance = 0.5;
+    let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
+    let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
+    let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
+    let movement = [unitVector[0] * distance, unitVector[1] * distance];
+    let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
+    controls.target.set(newPosition[0], 0, newPosition[1])
+    
     const loader = new GLTFLoader();
     loader.load('floor3d.glb', function (gltf) {
       const model = gltf.scene;

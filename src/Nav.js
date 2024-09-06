@@ -21,7 +21,7 @@ const Nav = () => {
 
   const location = useLocation();
   // const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = 'RK';
+  const userLocDetected = 'HG';
   const userPosDetected = "rooms";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
