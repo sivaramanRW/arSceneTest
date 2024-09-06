@@ -101,6 +101,7 @@ const FloorMap = ({ path }) => {
   const containerRef = useRef(null);
   const [modelVisible, setModelVisible] = useState(false);
   const userPos = modelCoordinates[path];
+  const markerModelRef = useRef(null);
 
   useEffect(() => {
     if (!modelVisible) return;
@@ -150,6 +151,7 @@ const FloorMap = ({ path }) => {
             markerModel.scale.set(0.5, 0.5, 0.5);
             markerModel.position.set(userPos[0], 0.6, userPos[1]);
             model.add(markerModel);
+            markerModelRef.current = markerModel;
           },
           undefined,
           function (error) {
@@ -166,6 +168,10 @@ const FloorMap = ({ path }) => {
     const animate = function () {
       requestAnimationFrame(animate);
       controls.update();
+      if (markerModelRef.current) {
+        markerModelRef.current.rotation.y += 0.01;
+      }
+
       renderer.render(scene, camera);
     };
 
@@ -195,6 +201,7 @@ const FloorMap = ({ path }) => {
     <div className="floor-map-container">
       <div className="main-content" ref={containerRef} style={{ display: modelVisible ? 'block' : 'none' }}></div>
       {!modelVisible && <div className="text-message">Face your phone camera towards the floor and click start</div>}
+      <button>rotate</button>
       <button className="toggle-button" onClick={toggleModel}>
         {modelVisible ? <FaTimes /> : <img src="map.png" alt="mapicon" style={{ height: '20px', width: '20px' }} />}
       </button>
