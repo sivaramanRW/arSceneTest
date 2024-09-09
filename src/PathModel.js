@@ -126,7 +126,6 @@ const FloorMap = ({ path }) => {
   useEffect(() => {
 
     setButton(false);
-    console.log('gg', convertedCoordinates);
 
     const container = containerRef.current;
     const scene = new THREE.Scene();

@@ -20,9 +20,7 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  // const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = 'TA';
-  const userPosDetected = "rooms";
+  const { userLocDetected, userPosDetected} = location.state || {}
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -53,7 +51,7 @@ const Nav = () => {
   let firstAdjust = useRef(null);
   let secondAdjust = useRef(null);
   let [Finalpoints, setFinalPoints] = useState(0);
-  const angle = (2 * Math.PI) / 180;
+  const angle = (4 * Math.PI) / 180;
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -383,7 +381,6 @@ const Nav = () => {
       return acc;
     }, {});
     setFoundPathPoints(rotatedPoints);
-    console.log('new points',newPoints);
     const firstPoint = {x :newPoints[0][0], y : newPoints[0][1]}
     const secondPoint = {x:newPoints[1][0],y :newPoints[1][1]}
     secondAdjust.current.position.set(newPoints[1][0], -2, newPoints[1][1]);
