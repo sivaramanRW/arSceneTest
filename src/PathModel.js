@@ -130,7 +130,7 @@ const FloorMap = ({ path }) => {
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(110, container.clientWidth / container.clientHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(120, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(convertedCoordinates[0][0], 0.6, convertedCoordinates[0][1]);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);

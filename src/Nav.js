@@ -21,7 +21,7 @@ const Nav = () => {
 
   const location = useLocation();
   // const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = 'TB';
+  const userLocDetected = 'TA';
   const userPosDetected = "rooms";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -49,6 +49,11 @@ const Nav = () => {
   const [headingStored, setHeadingStored] = useState(false);
   const [offset, setOffset] = useState(0);
   const [mapView, setmapView] = useState(false);
+
+  let firstAdjust = useRef(null);
+  let secondAdjust = useRef(null);
+  let [Finalpoints, setFinalPoints] = useState(0);
+  const angle = (2 * Math.PI) / 180;
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -313,15 +318,76 @@ const Nav = () => {
         }, {});
 
         console.log('converted',convertedObject);
-        
-        setFoundPathPoints(convertedObject)
+    
         setDistance(totalDistance);
         setDis(true);
+        const result = Object.values(convertedObject).map(({ x, y }) => [x, y]);
+        setFinalPoints(result);
+        adjustmentPath(convertedObject);
       }
     }else{
         setFloor(false);
         setMessage(selectedContent.path);
     }
+  };
+
+  const adjustmentPath = (points) => {
+    
+    const geometry = new THREE.SphereGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0xb83ff });
+
+    const firstPoint = new THREE.Mesh(geometry, material);
+    firstPoint.scale.set(0.3, 0.3, 0.3);
+    firstPoint.position.set(points['A'].x, -2, points['A'].y);
+    sceneRef.current.add(firstPoint);
+    const secondPoint = new THREE.Mesh(geometry, material);
+    secondPoint.scale.set(0.3, 0.3, 0.3);
+    secondPoint.position.set(points['B'].x, -2, points['B'].y);
+    sceneRef.current.add(secondPoint);
+
+    firstAdjust.current = firstPoint;
+    secondAdjust.current = secondPoint;
+
+    createPathSegment(points['A'], points['B']);
+  }
+
+  const rotatePoint = (point, center, theta) => {
+    const [x, y] = point;
+    const [cx, cy] = center;
+    const newX = Math.cos(theta) * (x - cx) - Math.sin(theta) * (y - cy) + cx;
+    const newY = Math.sin(theta) * (x - cx) + Math.cos(theta) * (y - cy) + cy;
+    return [newX, newY];
+  };
+  
+  const rotate = (direction) => {
+
+    while (sceneRef.current.children.length > 0) {
+      sceneRef.current.remove(sceneRef.current.children[0]);
+    }
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    sceneRef.current.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(0, 1, 1).normalize();
+    sceneRef.current.add(directionalLight);
+
+    const center = Finalpoints[0]; 
+    const theta = direction === 'left' ? angle : -angle; 
+    const newPoints = Finalpoints.map((point, index) => {
+     return index === 0 ? point : rotatePoint(point, center, theta);
+    });
+
+    setFinalPoints(newPoints);
+    const rotatedPoints = labels.slice(0, newPoints.length).reduce((acc, label, index) => {
+      acc[label] = { x: newPoints[index][0], y: newPoints[index][1] };
+      return acc;
+    }, {});
+    setFoundPathPoints(rotatedPoints);
+    console.log('new points',newPoints);
+    const firstPoint = {x :newPoints[0][0], y : newPoints[0][1]}
+    const secondPoint = {x:newPoints[1][0],y :newPoints[1][1]}
+    secondAdjust.current.position.set(newPoints[1][0], -2, newPoints[1][1]);
+    createPathSegment(firstPoint, secondPoint);
   };
 
   const handleGo = () => {
@@ -646,6 +712,10 @@ const Nav = () => {
 
         {mapView && 
         <div className='map-container'>
+          <div style={{justifyContent : "space-between", display : "flex", placeItems : "center"}}>
+            <button onClick={() => rotate('right')}>Rotate Left</button> 
+            <button onClick={() => rotate('left')}>Rotate Right</button>
+          </div>
           <div className="close-icon-two" onClick={hideMap}><FaTimes /></div>
           <PathModel path = {modelPath}/>
         </div>
