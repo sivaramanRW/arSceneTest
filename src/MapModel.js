@@ -6,6 +6,7 @@ import './MapModel.css';
 import { FaTimes } from 'react-icons/fa';
 
 const FloorMap = ({ path }) => {
+  
   const modelCoordinates = {
     "BF": [0.1, 13],
     "BG": [-1, 13],
@@ -99,9 +100,9 @@ const FloorMap = ({ path }) => {
   };
 
   const containerRef = useRef(null);
+  const modelRef = useRef(null);
   const [modelVisible, setModelVisible] = useState(false);
   const userPos = modelCoordinates[path];
-  const markerModelRef = useRef(null);
 
   useEffect(() => {
     if (!modelVisible) return;
@@ -137,41 +138,35 @@ const FloorMap = ({ path }) => {
 
     let model;
     const loader = new GLTFLoader();
-    
     loader.load(
       'floor3d.glb',
-      function (gltf) {
+      (gltf) => {
         model = gltf.scene;
         scene.add(model);
-
         loader.load(
           'youherered.glb',
-          function (gltfMarker) {
+          (gltfMarker) => {
             const markerModel = gltfMarker.scene;
             markerModel.scale.set(0.5, 0.5, 0.5);
             markerModel.position.set(userPos[0], 0.6, userPos[1]);
             model.add(markerModel);
-            markerModelRef.current = markerModel;
+            modelRef.current = markerModel;
           },
           undefined,
-          function (error) {
+          (error) => {
             console.error(error);
           }
         );
       },
       undefined,
-      function (error) {
+      (error) => {
         console.error(error);
       }
     );
 
-    const animate = function () {
+    const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
-      if (markerModelRef.current) {
-        markerModelRef.current.rotation.y += 0.01;
-      }
-
       renderer.render(scene, camera);
     };
 
@@ -200,10 +195,13 @@ const FloorMap = ({ path }) => {
   return (
     <div className="floor-map-container">
       <div className="main-content" ref={containerRef} style={{ display: modelVisible ? 'block' : 'none' }}></div>
-      {!modelVisible && <div className="text-message">Face your phone camera towards the floor and click start</div>}
-      <button>rotate</button>
+      {!modelVisible && (
+        <div className="text-message">
+          Face your phone camera towards the floor and click start.
+        </div>
+      )}
       <button className="toggle-button" onClick={toggleModel}>
-        {modelVisible ? <FaTimes /> : <img src="map.png" alt="mapicon" style={{ height: '20px', width: '20px' }} />}
+        {modelVisible ? <FaTimes /> : <img src="map.png" alt="mapicon" style={{ height: "20px", width: "20px" }} />}
       </button>
     </div>
   );

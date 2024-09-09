@@ -502,7 +502,7 @@ const Nav = () => {
     });
    
     const labelText = selectedContent.content || 'Unknown Room';
-    addLabel(labelText, x, 0.7, y);
+    addLabel(labelText, x, 0.7, y); 
   }
 
   const GetHeading = () => {
