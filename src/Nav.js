@@ -20,9 +20,7 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  //const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = "TA";
-  const userPosDetected = "test";
+  const { userLocDetected, userPosDetected} = location.state || {}
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
