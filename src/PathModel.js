@@ -186,12 +186,12 @@ const FloorMap = ({ path }) => {
       const material = new THREE.MeshBasicMaterial({ color: 0xb83ff });
   
       const sphere1 = new THREE.Mesh(geometry, material);
-      sphere1.scale.set(0.3, 0.3, 0.3);
+      sphere1.scale.set(0.2, 0.2, 0.2);
       sphere1.position.set(start.x, 0.6, start.y);
       modelRef.current.add(sphere1);
   
       const sphere2 = new THREE.Mesh(geometry, material);
-      sphere2.scale.set(0.3, 0.3, 0.3);
+      sphere2.scale.set(0.1, 0.1, 0.1);
       sphere2.position.set(end.x, 0.6, end.y);
       modelRef.current.add(sphere2);
   
@@ -215,7 +215,7 @@ const FloorMap = ({ path }) => {
               const position = new THREE.Vector3().lerpVectors(points[0], points[1], t);
               const arrow = arrowModel.clone();
               arrow.position.copy(position);
-              arrow.scale.set(0.1, 0.1, 0.1);
+              arrow.scale.set(0.06, 0.06, 0.06);
   
               const direction = new THREE.Vector3().subVectors(points[1], points[0]).normalize();
               const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction);

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import './Nav.css';
 import { graph, coordinates, dijkstra } from './graphData.js';
 import { transformCoordinatesPath } from './coordiantesTransform.js';
@@ -20,7 +20,9 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  const { userLocDetected, userPosDetected} = location.state || {}
+  //const { userLocDetected, userPosDetected} = location.state || {}
+  const userLocDetected = 'TB';
+  const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -316,7 +318,8 @@ const Nav = () => {
         }, {});
 
         console.log('converted',convertedObject);
-    
+
+        setFoundPathPoints(convertedObject);
         setDistance(totalDistance);
         setDis(true);
         const result = Object.values(convertedObject).map(({ x, y }) => [x, y]);
@@ -648,7 +651,6 @@ const Nav = () => {
   
         {showContainer && (
           <div className="container">
-            <div>{heading.toFixed(0)}</div>
             <div className="header">
               <div className="title-line">
                 <h2 className="title">Explore</h2>
@@ -708,13 +710,18 @@ const Nav = () => {
           </div>
         )}
 
+        {mapView &&
+        <div className = "leftRight">
+          <div className="close-icon-two" style={{marginTop : "5%", marginRight : "5%"}} onClick={hideMap}><FaTimes /></div>
+          <div style={{width : "100%", display : "flex", justifyContent : "space-between", placeItems : "center", paddingLeft : "10px", paddingRight : "10px"}}>
+            <div onClick={() => rotate('right')} className = "rotateArrowIcon"><FaArrowLeft /></div>
+            <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
+          </div>
+        </div>
+        }
+
         {mapView && 
         <div className='map-container'>
-          <div style={{justifyContent : "space-between", display : "flex", placeItems : "center"}}>
-            <button onClick={() => rotate('right')}>Rotate Left</button> 
-            <button onClick={() => rotate('left')}>Rotate Right</button>
-          </div>
-          <div className="close-icon-two" onClick={hideMap}><FaTimes /></div>
           <PathModel path = {modelPath}/>
         </div>
         }

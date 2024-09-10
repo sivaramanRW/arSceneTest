@@ -614,8 +614,8 @@
   height: 35px;
   width: 35px;
   border-radius: 50%;
-  margin-top: 10px;
-  margin-right: 10px;
+  margin-top: 5%;
+  margin-right: 5%;
   display: flex;
   place-items: center;
   justify-content: center;
@@ -628,7 +628,7 @@
 
 .map-container {
   position: absolute;
-  top: 100%;
+  top: 90%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
@@ -642,6 +642,25 @@
   border: 1px solid rgba(255, 255, 255, 0.40);
   background: rgba(255, 255, 255, 0.20);
   backdrop-filter: blur(20.399999618530273px);
+}
+
+.leftRight{
+  z-index: 10001;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  place-items: center;
+}
+
+.rotateArrowIcon{
+  height: 35px;
+  width: 35px;
+  display: flex;
+  justify-content: center;
+  place-items: center;
+  border-radius: 50%;
+  background-color: #cccccc;
 }
 
  
