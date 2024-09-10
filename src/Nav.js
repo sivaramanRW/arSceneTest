@@ -20,7 +20,9 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  const { userLocDetected, userPosDetected} = location.state || {}
+  //const { userLocDetected, userPosDetected} = location.state || {}
+  const userLocDetected = "TA";
+  const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -414,6 +416,7 @@ const Nav = () => {
   }
 
   const createPathSegment = (start, end) => {
+    
     const geometry = new THREE.SphereGeometry();
     const material = new THREE.MeshBasicMaterial({ color: 0xb83ff });
 

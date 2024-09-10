@@ -112,6 +112,7 @@ const FloorMap = ({ path }) => {
 
   const ModelPathTemp = [];
   const containerRef = useRef(null);
+  const modelRef = useRef(null);
   const [button, setButton] = useState(true);
   let userPos = modelCoordinates[path];
   const pathCoordinates = path.map(point => modelCoordinates[point]);
@@ -160,34 +161,77 @@ const FloorMap = ({ path }) => {
     let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
     let movement = [unitVector[0] * distance, unitVector[1] * distance];
     let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
-    controls.target.set(newPosition[0], 0, newPosition[1])
+    controls.target.set(newPosition[0], 0, newPosition[1]);
+    console.log('cc', convertedCoordinates);
     
     const loader = new GLTFLoader();
     loader.load('floor3d.glb', function (gltf) {
       const model = gltf.scene;
       scene.add(model);
-
-      const dotGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-      const dotMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-
-      for (let i = 0; i < convertedCoordinates.length; i++) {
-        const dot1 = new THREE.Mesh(dotGeometry, dotMaterial);
-        dot1.position.set(convertedCoordinates[i][0], 0.6, convertedCoordinates[i][1]);
-        model.add(dot1);
-      }
-
-      for (let j = 0; j < convertedCoordinates.length - 1; j++) {
-        const pointA = new THREE.Vector3(convertedCoordinates[j][0], 0.6, convertedCoordinates[j][1]);
-        const pointB = new THREE.Vector3(convertedCoordinates[j + 1][0], 0.6, convertedCoordinates[j + 1][1]);
-        const geometry = new THREE.BufferGeometry().setFromPoints([pointA, pointB]);
-        const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
-        const line = new THREE.Line(geometry, material);
-        model.add(line);
+      modelRef.current = model;
+      
+      for(let i = 0; i < convertedCoordinates.length; i++){
+        let one = {x: convertedCoordinates[i][0], y : convertedCoordinates[i][1]};
+        let two = {x: convertedCoordinates[i+1][0], y : convertedCoordinates[i+1][1]};
+        createPathSegment(one,two);
       }
 
     }, undefined, function (error) {  
       console.error(error);
     });
+
+    const createPathSegment = (start, end) => {
+
+      const geometry = new THREE.SphereGeometry();
+      const material = new THREE.MeshBasicMaterial({ color: 0xb83ff });
+  
+      const sphere1 = new THREE.Mesh(geometry, material);
+      sphere1.scale.set(0.3, 0.3, 0.3);
+      sphere1.position.set(start.x, 0.6, start.y);
+      modelRef.current.add(sphere1);
+  
+      const sphere2 = new THREE.Mesh(geometry, material);
+      sphere2.scale.set(0.3, 0.3, 0.3);
+      sphere2.position.set(end.x, 0.6, end.y);
+      modelRef.current.add(sphere2);
+  
+      createArrowPath([
+          new THREE.Vector3(start.x, 0.6, start.y),
+          new THREE.Vector3(end.x, 0.6, end.y)
+      ]);
+    }
+  
+    const createArrowPath = (points) => {
+      const loader = new GLTFLoader();
+      loader.load('carArrow.glb', (gltf) => {
+          const arrowModel = gltf.scene;
+  
+          const distance = points[0].distanceTo(points[1]);
+          const arrowSpacing = 0.5;
+          const numArrows = Math.ceil(distance / arrowSpacing);
+  
+          for (let i = 0; i < numArrows; i++) {
+              const t = i / (numArrows - 1);
+              const position = new THREE.Vector3().lerpVectors(points[0], points[1], t);
+              const arrow = arrowModel.clone();
+              arrow.position.copy(position);
+              arrow.scale.set(0.1, 0.1, 0.1);
+  
+              const direction = new THREE.Vector3().subVectors(points[1], points[0]).normalize();
+              const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction);
+              arrow.setRotationFromQuaternion(quaternion);
+              arrow.rotateY(Math.PI);
+              arrow.traverse((child) => {
+                  if (child.isMesh) {
+                      child.material.color.set(0xb83ff);
+                  }
+              });
+              modelRef.current.add(arrow);
+          }
+      }, undefined, (error) => {
+          console.error('An error happened', error);
+      });
+    }
 
     const animate = function () {
       requestAnimationFrame(animate);
