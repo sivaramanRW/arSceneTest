@@ -712,11 +712,14 @@ const Nav = () => {
 
         {mapView &&
         <div className = "leftRight">
-          <div className="close-icon-two" style={{marginTop : "5%", marginRight : "5%"}} onClick={hideMap}><FaTimes /></div>
-          <div style={{width : "100%", display : "flex", justifyContent : "space-between", placeItems : "center", paddingLeft : "10px", paddingRight : "10px"}}>
+          <div className = "close-icon-twos" onClick={hideMap}>
+            <div className='close-icon-twos-close'><FaTimes /></div>
+          </div>
+          <div style={{width : "96%", display : "flex", justifyContent : "space-between", placeItems : "center"}}>
             <div onClick={() => rotate('right')} className = "rotateArrowIcon"><FaArrowLeft /></div>
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
+          <div className='user-orientation'>hiii</div>
         </div>
         }
 

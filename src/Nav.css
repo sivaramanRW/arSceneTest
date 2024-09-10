@@ -649,8 +649,29 @@
   height: 100%;
   width: 100%;
   display: flex;
+  justify-content: space-between;
+  place-items: center;
+  flex-direction: column;
+}
+
+.close-icon-twos{
+  height: 35px;
+  width: 100%;
+  display: flex;
+  justify-content: end;
+  place-items: center;
+  padding-right: 5%;
+}
+
+.close-icon-twos-close{
+  height: 35px;
+  width: 35px;
+  display: flex;
   justify-content: center;
   place-items: center;
+  border-radius: 50%;
+  margin-top: 5%;
+  background-color: #cccccc;
 }
 
 .rotateArrowIcon{
@@ -661,6 +682,10 @@
   place-items: center;
   border-radius: 50%;
   background-color: #cccccc;
+}
+
+.user-orientation{
+  border: 1px solid red;
 }
 
  
