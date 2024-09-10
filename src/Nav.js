@@ -593,7 +593,7 @@ const Nav = () => {
       direction = 360 - event.alpha;
     }
   
-    if (direction !== undefined && count === 0) {
+    if (direction !== undefined) {
       direction = (direction + offset + 360) % 360;
       setHeading(direction);
       count = count + 1;
@@ -719,7 +719,9 @@ const Nav = () => {
             <div onClick={() => rotate('right')} className = "rotateArrowIcon"><FaArrowLeft /></div>
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
-          <div className='user-orientation'>hiii</div>
+          <div className='user-orientation'>
+            <img src='compassArrow2.png' style={{height : "80px", width : "80px", transform: `rotate(${heading.toFixed(0)}deg)`}}></img>
+          </div>
         </div>
         }
 

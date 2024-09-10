@@ -131,7 +131,7 @@ const FloorMap = ({ path }) => {
     const container = containerRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(120, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(convertedCoordinates[0][0], 0.9, convertedCoordinates[0][1]);
+    camera.position.set(convertedCoordinates[0][0], 0.15, convertedCoordinates[0][1]);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
@@ -155,7 +155,7 @@ const FloorMap = ({ path }) => {
     const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1])
     const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1])
    
-    let distance = 0.5;
+    let distance = 0.1;
     let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
     let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
     let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
@@ -182,8 +182,8 @@ const FloorMap = ({ path }) => {
 
     const createPathSegment = (start, end) => {
       createArrowPath([
-          new THREE.Vector3(start.x, 0.6, start.y),
-          new THREE.Vector3(end.x, 0.6, end.y)
+          new THREE.Vector3(start.x, 0.5, start.y),
+          new THREE.Vector3(end.x, 0.5, end.y)
       ]);
     }
   
