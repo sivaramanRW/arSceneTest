@@ -21,7 +21,7 @@ const Nav = () => {
 
   const location = useLocation();
   //const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = 'TB';
+  const userLocDetected = "TC";
   const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -383,6 +383,7 @@ const Nav = () => {
       acc[label] = { x: newPoints[index][0], y: newPoints[index][1] };
       return acc;
     }, {});
+    console.log('rotated points', rotatedPoints);
     setFoundPathPoints(rotatedPoints);
     const firstPoint = {x :newPoints[0][0], y : newPoints[0][1]}
     const secondPoint = {x:newPoints[1][0],y :newPoints[1][1]}
@@ -391,6 +392,7 @@ const Nav = () => {
   };
 
   const handleGo = () => {
+
     console.log('FP', foundPathPoints);
     const keys = findTurningPoints(foundPathPoints);
     console.log('interkeys', keys);
@@ -470,6 +472,7 @@ const Nav = () => {
   }
 
   const calculateTurnDirection = (prev, current, next) => {
+
     if (prev.x === current.x && current.x === next.x) {
         return (next.y > prev.y) ? 'U turn' : 'straight';
     }
@@ -651,6 +654,7 @@ const Nav = () => {
   
         {showContainer && (
           <div className="container">
+           <div> x: {userPosition.x.toFixed(0)} y: {userPosition.y.toFixed(0)} z: {userPosition.z.toFixed(0)}</div>
             <div className="header">
               <div className="title-line">
                 <h2 className="title">Explore</h2>
@@ -727,7 +731,7 @@ const Nav = () => {
 
         {mapView && 
         <div className='map-container'>
-          <PathModel path = {modelPath}/>
+          <PathModel path = {modelPath} userPosCurr = {userPosition} />
         </div>
         }
 

@@ -5,8 +5,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './PathModel.css';
 import { useState } from 'react';
 import { findTurningPoints } from './TurningPoints';
+import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
 
-const FloorMap = ({ path }) => {
+const FloorMap = ({ path, userPosCurr }) => {
 
   const modelCoordinates = {
     "BF": [0.1, 13],
@@ -123,7 +124,6 @@ const FloorMap = ({ path }) => {
   }
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
 
-
   useEffect(() => {
 
     setButton(false);
@@ -162,7 +162,6 @@ const FloorMap = ({ path }) => {
     let movement = [unitVector[0] * distance, unitVector[1] * distance];
     let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
     controls.target.set(newPosition[0], 0, newPosition[1]);
-    console.log('cc', convertedCoordinates);
     
     const loader = new GLTFLoader();
     loader.load('floor3d.glb', function (gltf) {
@@ -241,6 +240,13 @@ const FloorMap = ({ path }) => {
       renderer.dispose();
       controls.dispose();
     };
+  }, []);
+
+  useEffect(() => {
+    const TrackingPoints = TrackPointsConvert(path[0]);
+    const TrackedPosition = findClosestPoint(TrackingPoints, [userPosCurr.x, userPosCurr.z]);
+    console.log('Tracking Points converted', TrackingPoints);
+    console.log('Tracked position', TrackedPosition);
   }, []);
 
   return (

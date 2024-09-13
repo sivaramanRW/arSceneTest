@@ -182,7 +182,7 @@ export const coordinates = {
     "AI": [8, 0],
     "N" : [2,0],
     "O" :[2,-2]
- };
+};
 
 export const dijkstra = (graph, start, end) => {
     const queue = new PriorityQueue();

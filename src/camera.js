@@ -98,7 +98,12 @@ const Camera = () => {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('http://localhost:8000/upload-video', {
+      // const res = await fetch('http://localhost:8000/upload-video', {
+      //   method: 'POST',
+      //   body: formData,
+      // });
+
+      const res = await fetch('https://b080-49-207-184-66.ngrok-free.app/upload-video', {
         method: 'POST',
         body: formData,
       });
