@@ -726,7 +726,7 @@
   height: 35px;
   width: 35px;
   border-radius: 50%;
-  background-color: #cccccc;
+  background-color: gray;
   display: flex;
   justify-content: center;
   place-items: center;

@@ -21,9 +21,7 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  //const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = "TC";
-  const userPosDetected = "test";
+  const { userLocDetected, userPosDetected} = location.state || {};
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -385,7 +383,6 @@ const Nav = () => {
       acc[label] = { x: newPoints[index][0], y: newPoints[index][1] };
       return acc;
     }, {});
-    console.log('rotated points', rotatedPoints);
     setFoundPathPoints(rotatedPoints);
     const firstPoint = {x :newPoints[0][0], y : newPoints[0][1]}
     const secondPoint = {x:newPoints[1][0],y :newPoints[1][1]}
@@ -644,9 +641,9 @@ const Nav = () => {
         )}
 
         {arStarted && !showContainer && !destinationReached && showDistance &&(
-          <div style={{height : "20%", width : "100%", display : "flex", justifyContent : "end", placeItems : "center"}}>
+          <div style={{height : "30%", width : "100%", display : "flex", justifyContent : "flex-start", paddingLeft : "85%", placeItems : "center"}}>
             <div className = "position-map-icon" onClick={ShowModelposition}>
-             <img src='map.png' alt = "map" style={{height : "20px", width : "20px"}}></img>
+              <img src='map.png' alt = "map" style={{height : "20px", width : "20px"}}></img>
             </div>
           </div>
         )}
