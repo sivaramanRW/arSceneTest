@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import './Nav.css';
 import MapModel from './MapModel.js'; 
 import PathModel from './PathModel.js'; 
+import PositionModel from './PositionModel.js';
 
 let selectedContent = {};
 let modelPath = [];
@@ -21,7 +22,7 @@ const Nav = () => {
 
   const location = useLocation();
   //const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = "TB";
+  const userLocDetected = "TC";
   const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -34,6 +35,7 @@ const Nav = () => {
   const [messageBack, setMessage] = useState('');
   const [arStarted, setArStarted] = useState(false);
   const [distance, setDistance] = useState(0);
+  const [PositionModelShow, setPositionModelShow] = useState(false);
   const [userPosition, setUserPosition] = useState({ x: 0, y: 0, z: 0 });
   const [foundPathPoints, setFoundPathPoints] = useState([]);
   const [visiblePathPoints, setVisiblePathPoints] = useState([]);
@@ -612,6 +614,13 @@ const Nav = () => {
     setmapView(false);
   }
 
+  const ShowModelposition = () => {
+    setPositionModelShow(true);
+  }
+  const HideModelposition = () => {
+    setPositionModelShow(false);
+  }
+
   return (
   <div ref={mountRef} className='app'>
     {arStarted ? (
@@ -630,6 +639,23 @@ const Nav = () => {
               <div className="department">
                 <div className="departmentName">{selectedContent.content}</div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {arStarted && !showContainer && !destinationReached && showDistance &&(
+          <div style={{height : "20%", width : "100%", display : "flex", justifyContent : "end", placeItems : "center"}}>
+            <div className = "position-map-icon" onClick={ShowModelposition}>
+             <img src='map.png' alt = "map" style={{height : "20px", width : "20px"}}></img>
+            </div>
+          </div>
+        )}
+
+        {PositionModelShow &&(
+          <div className='position-model'>
+            <div style={{position : "relative", height : "100%", width : "100%"}}>
+              <div className = "position-model-close" onClick={HideModelposition}><FaTimes /></div>
+              <PositionModel path = {modelPath} userPosCurr = {userPosition} />
             </div>
           </div>
         )}
@@ -720,7 +746,6 @@ const Nav = () => {
           </div>
           <div style={{width : "96%", display : "flex", justifyContent : "space-between", placeItems : "center"}}>
             <div onClick={() => rotate('right')} className = "rotateArrowIcon"><FaArrowLeft /></div>
-            <div> x: {userPosition.x.toFixed(0)} y: {userPosition.y.toFixed(0)} z: {userPosition.z.toFixed(0)}</div>
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
           <div className='user-orientation'>

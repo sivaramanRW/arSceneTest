@@ -5,8 +5,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './PathModel.css';
 import { useState } from 'react';
 import { findTurningPoints } from './TurningPoints';
+import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
 
-const FloorMap = ({ path }) => {
+const PositionModel = ({ path, userPosCurr }) => {
 
   const modelCoordinates = {
     "BF": [0.1, 13],
@@ -123,6 +124,7 @@ const FloorMap = ({ path }) => {
     ModelPathTemp.push(modelApla[InterKeys[i]]);
   }
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
 
   useEffect(() => {
 
@@ -176,6 +178,7 @@ const FloorMap = ({ path }) => {
       cube.position.set(convertedCoordinates[0][0], 0.6, convertedCoordinates[0][1]);
       model.add(cube);
       cubeRef.current = cube;
+      setIsModelLoaded(true);
       
       for(let i = 0; i < convertedCoordinates.length; i++){
         let one = {x: convertedCoordinates[i][0], y : convertedCoordinates[i][1]};
@@ -251,9 +254,20 @@ const FloorMap = ({ path }) => {
 
   }, []);
 
+
+  useEffect(() => {
+    if (isModelLoaded && cubeRef.current) {
+      const TrackingPoints = TrackPointsConvert(path[0]);
+      const TrackedPosition = findClosestPoint(TrackingPoints, [userPosCurr.x, userPosCurr.z], path[0]);
+      cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
+      console.log('Tracking Points converted', TrackingPoints);
+      console.log('Tracked position', TrackedPosition);
+    }
+  }, [isModelLoaded, path, userPosCurr]);
+
   return (
     <div className='path-map-containers' ref={containerRef}></div>
   );
 };
 
-export default FloorMap;
+export default PositionModel;

@@ -67,10 +67,6 @@ export const TrackPointsConvert = (startPoint) => {
 export const findClosestPoint = (convertedCoords, randomCoord) => {
     let closestPoint = null;
     let closestDistance = Infinity;
-    const threshold = 0.2;
-
-    console.log('random point', randomCoord);
-    console.log('initial pos', iniPos);
 
     for (const point in convertedCoords) {
         const [x, y] = convertedCoords[point];
@@ -91,26 +87,3 @@ export const findClosestPoint = (convertedCoords, randomCoord) => {
         return iniPos;
     }
 };
-
-
-
-// export const findClosestPoint = (convertedCoords, randomCoord) => {
-//     let closestPoint = null;
-//     let closestDistance = Infinity;
-
-//     console.log('random point', randomCoord);
-
-//     for (const point in convertedCoords) {
-//         const [x, y] = convertedCoords[point];
-//         const [randX, randY] = randomCoord;
-
-//         const distance = Math.sqrt(Math.pow(x - randX, 2) + Math.pow(y - randY, 2));
-
-//         if (distance < closestDistance) {
-//             closestDistance = distance;
-//             closestPoint = point;
-//         }
-//     }
-    
-//     return closestPoint;
-// };
