@@ -1,51 +1,3 @@
-export const graph = { 
-    'BK' : {'BF' : 5},'BJ' : {'BF' : 4},
-    'BI' : {'BF' : 3},'BG' : {'BF' : 2},
-    'BH' : {'BF' : 1},'BF' : {'B' : 2.7, 'BG' : 1, 'BH' : 2, 'BI' : 3, 'BJ' : 4, 'BK' : 5},
-    'BE' : {'B' : 5},'BD' : {'B' : 4},
-    'BC' : {'B' : 3},'BB' : {'B' : 2},
-    'BA' : {'B' : 1},'B' : {'BF' : 2.7, 'D' : 1, 'CA' : 2, 'BA' : 1, 'BB' : 2, 'BC' : 3, 'BD' : 4, 'BE' : 5},
-    'CA' : {'B' : 2, 'CC' : 1, 'CB' : 1, 'CF' : 2, 'CD' : 1, 'CE' : 2, 'CG' : 2},'CB' : {'CA' : 1},
-    'CG' : {'CA' : 2},'CF' : {'CA' : 2},
-    'CE' : {'CA' : 2},'CD' : {'CA' : 1},
-    'CC' : {'CA' : 1},'D' : {'B' : 1, 'F' : 2, 'DA' : 1, 'DB' : 2, 'DC' : 1},
-    'DA' : {'D' : 1},'DB' : {'D': 2},
-    'DC': {'D' : 3}, 'F' : {'G' : 2, 'D' : 2, 'AA' : 1.3},
-    'G' : {'F' : 2}, 'AA' : {'F' : 1.3, 'H' : 1.2},
-    'H' : {'AA' : 1.3, 'AB' : 1, 'HA' : 1},'HA' : {'H' : 1, 'HH' : 1, 'HG' : 4, 'HC' : 4, 'HF' : 4, 'HE' : 2, 'HD' : 1, 'HB' : 2},
-    'HH' : {'HA' : 1},'HB' : {'HA' : 2},
-    'HG' : {'HA' : 4},'HC' : {'HA' : 4},
-    'HF' : {'HA' : 4},'HE' : {'HA' : 2},
-    'HD' : {'HA' : 1},'AB' : {'H' : 1, 'AC' : 1},
-    'AC' : {'AB' : 1, 'AD' : 1},'AD' : {'AC' : 1, 'J' : 1},
-    'J' : {'AD' : 1, 'AE' : 1.3, 'JA' : 1, 'JB' : 2, 'JC' : 3}, 'JA' : {'J' : 1},
-    'JB' : {'J' : 2}, 'JC' : {'J' : 3},
-    'AE' : {'J' : 1.3, 'L' : 1.5},  'L' : {'AE' : 1.5, 'AF' : 1, 'LA' : 1, 'LB' : 2, 'LC' : 3},
-    'LA' : {'L' : 1}, 'LB' : {'L' : 2},
-    'LC' : {'L' : 3}, 'AF' : {'L' : 1, 'N' : 1},
-    'N' : {'O' : 2, 'AF' : 1, 'P' : 1.5}, 'O' : {'N' : 2},
-    'P' : {'N' : 1.5, 'AG' : 1.3, 'PA' : 1, 'PB' : 2, 'PC' : 3}, 'PA' : {'P' : 1},
-    'PB' : {'P' : 2}, 'PC' : {'P' : 3},
-    'AG' : {'P' : 1.3, 'R' : 1.3}, 'R': {'AG' : 1.3, 'RD' : 1, 'AH' : 1, 'RA' : 1, 'RB' : 2, 'RC' : 3},
-    'RA' : {'R' : 1}, 'RB' : {'R' : 2},
-    'RC' : {'R' : 3},'RD' : {'R' : 1, 'RE' : 1, 'RH' : 4, 'RF' : 2, 'RI' : 1, 'RG' : 4, 'RK' : 4, 'RL' : 2, 'RJ' : 1},
-    'RE' : {'RD' : 1},'RH' : {'RD' : 4},
-    'RF' : {'RD' : 2}, 'RI' : {'RD' : 1},
-    'RG' : {'RD' : 4},'RK' : {'RD' : 4},
-    'RL' : {'RD' : 2},'RJ' : {'RD' : 1},
-    'AH' : {'R' : 1, 'AI' : 1},'AI' : {'AH' : 1, 'T' : 1},
-    'T' : {'AI' : 1, 'TD' : 1, 'W' : 2, 'TA' : 1, 'TB' : 2, 'TC' : 3},'TA' : {'T' : 1},
-    'TB' : {'T' : 2},'TC' : {'T' : 3},
-    'TD' : {'T' : 1, 'TE' : 1, 'TF' : 2, 'TG' : 3, 'TH' : 4, 'TI' : 2, 'TJ' : 2, 'TK' : 3, 'TL' : 4, 'TM' : 5 , 'TN' : 6}, 'TE' : {'TD' : 1},
-    'TF' : {'TD' : 2}, 'TG' : {'TD' : 3},
-    'TH' : {'TD' : 4},'TI' : {'TD' : 3},
-    'TJ' : {'TD' : 2},'TK' : {'TD' : 3},
-    'TL' : {'TD' : 4},'TM' : {'TD' : 5},
-    'TN' : {'TD' : 6},'W' : {'T' : 2, 'WA' : 1, 'WB' : 2, 'WC' : 3},
-    'WA' : {'W' : 1},'WB' : {'W' : 2},
-    'WC' : {'W' : 3},
-};
-
 export const coordinates = {
     "AA" : [-7.2, 0],"D": [-10.5, 0],
     "DA": [-10.5, -1],"DB": [-10.5, -2],
@@ -94,7 +46,11 @@ export const coordinates = {
     "O" :[2,-2]
 };
 
+let iniPos = '';
+
 export const TrackPointsConvert = (startPoint) => {
+
+    iniPos = startPoint;
     const [startX, startY] = coordinates[startPoint];
     const convertedCoordinates = {};
 
@@ -108,12 +64,13 @@ export const TrackPointsConvert = (startPoint) => {
     return convertedCoordinates;
 };
 
-
 export const findClosestPoint = (convertedCoords, randomCoord) => {
     let closestPoint = null;
     let closestDistance = Infinity;
+    const threshold = 0.2;
 
     console.log('random point', randomCoord);
+    console.log('initial pos', iniPos);
 
     for (const point in convertedCoords) {
         const [x, y] = convertedCoords[point];
@@ -127,5 +84,33 @@ export const findClosestPoint = (convertedCoords, randomCoord) => {
         }
     }
 
-    return closestPoint;
+    if (closestPoint) {
+        iniPos = closestPoint;
+        return iniPos;
+    }else{
+        return iniPos;
+    }
 };
+
+
+
+// export const findClosestPoint = (convertedCoords, randomCoord) => {
+//     let closestPoint = null;
+//     let closestDistance = Infinity;
+
+//     console.log('random point', randomCoord);
+
+//     for (const point in convertedCoords) {
+//         const [x, y] = convertedCoords[point];
+//         const [randX, randY] = randomCoord;
+
+//         const distance = Math.sqrt(Math.pow(x - randX, 2) + Math.pow(y - randY, 2));
+
+//         if (distance < closestDistance) {
+//             closestDistance = distance;
+//             closestPoint = point;
+//         }
+//     }
+    
+//     return closestPoint;
+// };

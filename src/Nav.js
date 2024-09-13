@@ -21,7 +21,7 @@ const Nav = () => {
 
   const location = useLocation();
   //const { userLocDetected, userPosDetected} = location.state || {}
-  const userLocDetected = "TC";
+  const userLocDetected = "TB";
   const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -654,7 +654,6 @@ const Nav = () => {
   
         {showContainer && (
           <div className="container">
-           <div> x: {userPosition.x.toFixed(0)} y: {userPosition.y.toFixed(0)} z: {userPosition.z.toFixed(0)}</div>
             <div className="header">
               <div className="title-line">
                 <h2 className="title">Explore</h2>
@@ -721,6 +720,7 @@ const Nav = () => {
           </div>
           <div style={{width : "96%", display : "flex", justifyContent : "space-between", placeItems : "center"}}>
             <div onClick={() => rotate('right')} className = "rotateArrowIcon"><FaArrowLeft /></div>
+            <div> x: {userPosition.x.toFixed(0)} y: {userPosition.y.toFixed(0)} z: {userPosition.z.toFixed(0)}</div>
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
           <div className='user-orientation'>

@@ -114,6 +114,7 @@ const FloorMap = ({ path, userPosCurr }) => {
   const ModelPathTemp = [];
   const containerRef = useRef(null);
   const modelRef = useRef(null);
+  const cubeRef = useRef(null);
   const [button, setButton] = useState(true);
   let userPos = modelCoordinates[path];
   const pathCoordinates = path.map(point => modelCoordinates[point]);
@@ -123,6 +124,7 @@ const FloorMap = ({ path, userPosCurr }) => {
     ModelPathTemp.push(modelApla[InterKeys[i]]);
   }
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
 
   useEffect(() => {
 
@@ -168,6 +170,15 @@ const FloorMap = ({ path, userPosCurr }) => {
       const model = gltf.scene;
       scene.add(model);
       modelRef.current = model;
+
+      const geometry = new THREE.BoxGeometry();
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const cube = new THREE.Mesh(geometry, material);
+      cube.scale.set(0.1, 0.1, 0.1);
+      cube.position.set(convertedCoordinates[0][0], 0.6, convertedCoordinates[0][1]);
+      model.add(cube);
+      cubeRef.current = cube;
+      setIsModelLoaded(true);
       
       for(let i = 0; i < convertedCoordinates.length; i++){
         let one = {x: convertedCoordinates[i][0], y : convertedCoordinates[i][1]};
@@ -240,14 +251,19 @@ const FloorMap = ({ path, userPosCurr }) => {
       renderer.dispose();
       controls.dispose();
     };
+
   }, []);
 
+
   useEffect(() => {
-    const TrackingPoints = TrackPointsConvert(path[0]);
-    const TrackedPosition = findClosestPoint(TrackingPoints, [userPosCurr.x, userPosCurr.z]);
-    console.log('Tracking Points converted', TrackingPoints);
-    console.log('Tracked position', TrackedPosition);
-  }, []);
+    if (isModelLoaded && cubeRef.current) {
+      const TrackingPoints = TrackPointsConvert(path[0]);
+      const TrackedPosition = findClosestPoint(TrackingPoints, [userPosCurr.x, userPosCurr.z], path[0]);
+      cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
+      console.log('Tracking Points converted', TrackingPoints);
+      console.log('Tracked position', TrackedPosition);
+    }
+  }, [isModelLoaded, path, userPosCurr]);
 
   return (
     <div className='path-map-containers' ref={containerRef}></div>
