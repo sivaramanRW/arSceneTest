@@ -21,7 +21,9 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  const { userLocDetected, userPosDetected} = location.state || {};
+  //const { userLocDetected, userPosDetected} = location.state || {};
+  const userLocDetected = "TC";
+  const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -54,6 +56,8 @@ const Nav = () => {
   let secondAdjust = useRef(null);
   let [Finalpoints, setFinalPoints] = useState(0);
   const angle = (4 * Math.PI) / 180;
+  const [totalRotationAngle, setTotalRotationAngle] = useState(0);
+  const barrey = '1234';
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -353,6 +357,7 @@ const Nav = () => {
   }
 
   const rotatePoint = (point, center, theta) => {
+    console.log('kk', point, center, theta);
     const [x, y] = point;
     const [cx, cy] = center;
     const newX = Math.cos(theta) * (x - cx) - Math.sin(theta) * (y - cy) + cx;
@@ -373,7 +378,14 @@ const Nav = () => {
     sceneRef.current.add(directionalLight);
 
     const center = Finalpoints[0]; 
-    const theta = direction === 'left' ? angle : -angle; 
+    const theta = direction === 'left' ? angle : -angle;
+    
+    setTotalRotationAngle(prevAngle => {
+      const newAngle = prevAngle + (direction === 'left' ? angle : -angle);
+      console.log('Total rotation angle:', newAngle * (180 / Math.PI), 'degrees');
+      return newAngle;
+    });
+    
     const newPoints = Finalpoints.map((point, index) => {
      return index === 0 ? point : rotatePoint(point, center, theta);
     });
@@ -391,6 +403,8 @@ const Nav = () => {
   };
 
   const handleGo = () => {
+
+    console.log('totalRotationAngle',totalRotationAngle);
 
     console.log('FP', foundPathPoints);
     const keys = findTurningPoints(foundPathPoints);
@@ -604,19 +618,10 @@ const Nav = () => {
     }
   };
   
-  const showMap = () => {
-    setmapView(true);
-  }
-  const hideMap = () => {
-    setmapView(false);
-  }
-
-  const ShowModelposition = () => {
-    setPositionModelShow(true);
-  }
-  const HideModelposition = () => {
-    setPositionModelShow(false);
-  }
+  const showMap = () => setmapView(true);
+  const hideMap = () => setmapView(false);
+  const ShowModelposition = () => setPositionModelShow(true);
+  const HideModelposition = () => setPositionModelShow(false);
 
   return (
   <div ref={mountRef} className='app'>
@@ -652,7 +657,7 @@ const Nav = () => {
           <div className='position-model'>
             <div style={{position : "relative", height : "100%", width : "100%"}}>
               <div className = "position-model-close" onClick={HideModelposition}><FaTimes /></div>
-              <PositionModel path = {modelPath} userPosCurr = {userPosition} />
+              <PositionModel path = {modelPath} userPosCurr = {userPosition} rotateAngle = {totalRotationAngle}/>
             </div>
           </div>
         )}

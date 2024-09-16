@@ -6,8 +6,9 @@ import './PathModel.css';
 import { useState } from 'react';
 import { findTurningPoints } from './TurningPoints';
 import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
+import { TrackPointsAngle } from './TrackPointsAngle.js';
 
-const PositionModel = ({ path, userPosCurr }) => {
+const PositionModel = ({ path, userPosCurr, rotateAngle }) => {
 
   const modelCoordinates = {
     "BF": [0.1, 13],
@@ -129,6 +130,8 @@ const PositionModel = ({ path, userPosCurr }) => {
   useEffect(() => {
 
     setButton(false);
+
+    console.log('pos roate', rotateAngle);
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
@@ -258,6 +261,9 @@ const PositionModel = ({ path, userPosCurr }) => {
   useEffect(() => {
     if (isModelLoaded && cubeRef.current) {
       const TrackingPoints = TrackPointsConvert(path[0]);
+      const TrackingAnglePoints = TrackPointsAngle(TrackingPoints, rotateAngle);
+      console.log('before', TrackingPoints);
+      console.log('after', TrackingAnglePoints);
       const TrackedPosition = findClosestPoint(TrackingPoints, [userPosCurr.x, userPosCurr.z], path[0]);
       cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
     }
