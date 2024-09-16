@@ -6,6 +6,7 @@ import './PathModel.css';
 import { useState } from 'react';
 import { findTurningPoints } from './TurningPoints';
 import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
+import {TrackingPointsDegree} from './TrackingPointsDegree';
 
 const PositionModel = ({ path, userPosCurr, rotateAngle }) => {
 
@@ -257,7 +258,9 @@ const PositionModel = ({ path, userPosCurr, rotateAngle }) => {
   useEffect(() => {
     if (isModelLoaded && cubeRef.current) {
       const TrackingPoints = TrackPointsConvert(path[0]);
-      const TrackedPosition = findClosestPoint(TrackingPoints, [userPosCurr.x, userPosCurr.z], path[0]);
+      const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
+      console.log('TPDB', TrackingPointsDegreebased);
+      const TrackedPosition = findClosestPoint(TrackingPointsDegreebased, [userPosCurr.x, userPosCurr.z], path[0]);
       cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
     }
   }, [isModelLoaded, path, userPosCurr]);
