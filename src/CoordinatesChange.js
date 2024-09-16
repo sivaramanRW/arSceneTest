@@ -1,9 +1,8 @@
 export const CoordinatesChange = (originaldPath, cameradAngles) =>{
 
+    console.log('OGP', originaldPath, cameradAngles);
     const originalPath = originaldPath.map(({x, y}) => [x, y]);
     const cameraAngles = cameradAngles;
-    console.log('OG',originalPath);
-    console.log('angle',cameraAngles);
 
     const adjustedPath = adjustPath(originalPath, cameraAngles);
     const correctedPath = calculateDifference(originalPath, adjustedPath);

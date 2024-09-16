@@ -22,7 +22,7 @@ const Nav = () => {
 
   const location = useLocation();
   //const { userLocDetected, userPosDetected} = location.state || {};
-  const userLocDetected = "TC";
+  const userLocDetected = "TB";
   const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -357,7 +357,6 @@ const Nav = () => {
   }
 
   const rotatePoint = (point, center, theta) => {
-    console.log('kk', point, center, theta);
     const [x, y] = point;
     const [cx, cy] = center;
     const newX = Math.cos(theta) * (x - cx) - Math.sin(theta) * (y - cy) + cx;
@@ -382,7 +381,6 @@ const Nav = () => {
     
     setTotalRotationAngle(prevAngle => {
       const newAngle = prevAngle + (direction === 'left' ? angle : -angle);
-      console.log('Total rotation angle:', newAngle * (180 / Math.PI), 'degrees');
       return newAngle;
     });
     
@@ -395,6 +393,9 @@ const Nav = () => {
       acc[label] = { x: newPoints[index][0], y: newPoints[index][1] };
       return acc;
     }, {});
+
+    console.log('arrow', rotatedPoints);
+
     setFoundPathPoints(rotatedPoints);
     const firstPoint = {x :newPoints[0][0], y : newPoints[0][1]}
     const secondPoint = {x:newPoints[1][0],y :newPoints[1][1]}
@@ -609,7 +610,7 @@ const Nav = () => {
       direction = 360 - event.alpha;
     }
   
-    if (direction !== undefined) {
+    if (direction !== undefined && count === 0) {
       direction = (direction + offset + 360) % 360;
       setHeading(direction);
       count = count + 1;
@@ -657,7 +658,7 @@ const Nav = () => {
           <div className='position-model'>
             <div style={{position : "relative", height : "100%", width : "100%"}}>
               <div className = "position-model-close" onClick={HideModelposition}><FaTimes /></div>
-              <PositionModel path = {modelPath} userPosCurr = {userPosition} rotateAngle = {totalRotationAngle}/>
+              <PositionModel path = {modelPath} userPosCurr = {userPosition} rotateAngle = {heading.toFixed(0)}/>
             </div>
           </div>
         )}
@@ -682,6 +683,7 @@ const Nav = () => {
   
         {showContainer && (
           <div className="container">
+            <div>{heading.toFixed(2)}</div>
             <div className="header">
               <div className="title-line">
                 <h2 className="title">Explore</h2>
@@ -751,7 +753,8 @@ const Nav = () => {
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
           <div className='user-orientation'>
-            <img src='compassArrow2.png' style={{height : "80px", width : "80px", transform: `rotate(${heading.toFixed(0)}deg)`}}></img>
+            <div>{heading.toFixed(2)}</div>
+            {/* <img src='compassArrow2.png' style={{height : "80px", width : "80px", transform: `rotate(${heading.toFixed(0)}deg)`}}></img> */}
           </div>
         </div>
         }
