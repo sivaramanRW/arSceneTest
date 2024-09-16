@@ -22,7 +22,7 @@ const Nav = () => {
 
   const location = useLocation();
   //const { userLocDetected, userPosDetected} = location.state || {};
-  const userLocDetected = "TB";
+  const userLocDetected = "TC";
   const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
@@ -51,13 +51,12 @@ const Nav = () => {
   const [headingStored, setHeadingStored] = useState(false);
   const [offset, setOffset] = useState(0);
   const [mapView, setmapView] = useState(false);
+  const isAndroid = () => /Android/i.test(navigator.userAgent);
 
   let firstAdjust = useRef(null);
   let secondAdjust = useRef(null);
   let [Finalpoints, setFinalPoints] = useState(0);
   const angle = (4 * Math.PI) / 180;
-  const [totalRotationAngle, setTotalRotationAngle] = useState(0);
-  const barrey = '1234';
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -136,8 +135,8 @@ const Nav = () => {
         domOverlay: { root: document.body}
       });
       console.log('session :', session);
-      GetHeading();
       initializeARScene(session);
+      GetHeading();
     } catch (e) {
       console.error('Error starting AR session:', e);
       alert('Failed to start AR',e);
@@ -379,11 +378,6 @@ const Nav = () => {
     const center = Finalpoints[0]; 
     const theta = direction === 'left' ? angle : -angle;
     
-    setTotalRotationAngle(prevAngle => {
-      const newAngle = prevAngle + (direction === 'left' ? angle : -angle);
-      return newAngle;
-    });
-    
     const newPoints = Finalpoints.map((point, index) => {
      return index === 0 ? point : rotatePoint(point, center, theta);
     });
@@ -394,8 +388,6 @@ const Nav = () => {
       return acc;
     }, {});
 
-    console.log('arrow', rotatedPoints);
-
     setFoundPathPoints(rotatedPoints);
     const firstPoint = {x :newPoints[0][0], y : newPoints[0][1]}
     const secondPoint = {x:newPoints[1][0],y :newPoints[1][1]}
@@ -404,8 +396,6 @@ const Nav = () => {
   };
 
   const handleGo = () => {
-
-    console.log('totalRotationAngle',totalRotationAngle);
 
     console.log('FP', foundPathPoints);
     const keys = findTurningPoints(foundPathPoints);
@@ -590,34 +580,144 @@ const Nav = () => {
   }
 
   const GetHeading = () => {
-    if (!headingStored && window.DeviceOrientationEvent) {
-      if (typeof DeviceOrientationEvent.requestPermission !== 'function') {
-        window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+    if(isAndroid){
+      if (!headingStored && window.DeviceOrientationEvent) {
+        if (typeof DeviceOrientationEvent.requestPermission !== 'function') {
+          window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+        }
+      } else if (!headingStored) {
+        alert("Sorry, your browser doesn't support Device Orientation");
       }
-    } else if (!headingStored) {
-      alert("Sorry, your browser doesn't support Device Orientation");
+      return () => {
+        window.removeEventListener('deviceorientationabsolute', handleOrientation);
+      };
+    }else{
+      if (!headingStored && window.DeviceOrientationEvent) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then((response) => {
+              if (response === 'granted') {
+                window.addEventListener('deviceorientation', handleOrientation, true);
+              } else {
+                alert('Permission to access device orientation was denied.');
+              }
+            })
+            .catch((error) => {
+              console.error('Error requesting device orientation permission:', error);
+              alert('Permission request failed.');
+            });
+        } else {
+          window.addEventListener('deviceorientation', handleOrientation, true);
+        }
+      } else if (!headingStored) {
+        alert("Sorry, your browser doesn't support Device Orientation");
+      }
+    
+      return () => {
+        window.removeEventListener('deviceorientation', handleOrientation);
+      };
     }
-    return () => {
-      window.removeEventListener('deviceorientationabsolute', handleOrientation);
-    };
   }
-  
+ 
   const handleOrientation = (event) => {
-    let direction;
-    if (event.webkitCompassHeading) {
-      direction = event.webkitCompassHeading;
-    } else if (event.absolute && event.alpha !== null) {
-      direction = 360 - event.alpha;
-    }
-  
-    if (direction !== undefined && count === 0) {
-      direction = (direction + offset + 360) % 360;
-      setHeading(direction);
-      count = count + 1;
-      setHeadingStored(true);
-      window.removeEventListener('deviceorientationabsolute', handleOrientation);
+    if(isAndroid){
+      let direction;
+      if (event.webkitCompassHeading) {
+        direction = event.webkitCompassHeading;
+      } else if (event.absolute && event.alpha !== null) {
+        direction = 360 - event.alpha;
+      }
+      
+      if (direction !== undefined && count === 0) {
+        direction = (direction + offset + 360) % 360;
+        setHeading(direction);
+        count = count + 1;
+        setHeadingStored(true);
+        window.removeEventListener('deviceorientationabsolute', handleOrientation);
+      }
+    }else{
+      let direction;
+      if (event.webkitCompassHeading) {
+        direction = event.webkitCompassHeading;
+      } else if (event.absolute && event.alpha !== null) {
+        direction = 360 - event.alpha;
+        if (isAndroid()) {
+          const screenOrientation = window.screen.orientation.angle || window.orientation || 0;
+          direction = (direction + screenOrientation) % 360;
+        }
+      } else if (event.alpha !== null && !isAndroid()) {
+        direction = 360 - event.alpha;
+      } else if (event.gamma !== null && event.beta !== null) {
+        const radians = Math.atan2(event.gamma, event.beta);
+        const degrees = radians * 180 / Math.PI;
+        direction = (360 - degrees + 90) % 360;
+      }
+      
+      if (direction !== undefined && count === 0) {
+        direction = (direction + offset + 360) % 360;
+        setHeading(direction);
+        count = count + 1;
+        setHeadingStored(true);
+        window.removeEventListener('deviceorientation', handleOrientation);
+      }
     }
   };
+
+  // const GetHeading = () => {
+  //   if (!headingStored && window.DeviceOrientationEvent) {
+  //     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+  //       DeviceOrientationEvent.requestPermission()
+  //         .then((response) => {
+  //           if (response === 'granted') {
+  //             window.addEventListener('deviceorientation', handleOrientation, true);
+  //           } else {
+  //             alert('Permission to access device orientation was denied.');
+  //           }
+  //         })
+  //         .catch((error) => {
+  //           console.error('Error requesting device orientation permission:', error);
+  //           alert('Permission request failed.');
+  //         });
+  //     } else {
+  //       window.addEventListener('deviceorientation', handleOrientation, true);
+  //     }
+  //   } else if (!headingStored) {
+  //     alert("Sorry, your browser doesn't support Device Orientation");
+  //   }
+  
+  //   return () => {
+  //     window.removeEventListener('deviceorientation', handleOrientation);
+  //   };
+  // };
+  
+  // const handleOrientation = (event) => {
+  //   let direction;
+  
+  //   if (event.webkitCompassHeading) {
+  //     direction = event.webkitCompassHeading;
+  //   } else if (event.absolute && event.alpha !== null) {
+  //     direction = 360 - event.alpha;
+  
+  //     if (isAndroid()) {
+  //       const screenOrientation = window.screen.orientation.angle || window.orientation || 0;
+  //       direction = (direction + screenOrientation) % 360;
+  //     }
+  //   } else if (event.alpha !== null && !isAndroid()) {
+  //     direction = 360 - event.alpha;
+  //   } else if (event.gamma !== null && event.beta !== null) {
+  //     const radians = Math.atan2(event.gamma, event.beta);
+  //     const degrees = radians * 180 / Math.PI;
+  //     direction = (360 - degrees + 90) % 360;
+  //   }
+  
+  //   if (direction !== undefined && count === 0) {
+  //     direction = (direction + offset + 360) % 360;
+  //     setHeading(direction);
+  //     count = count + 1;
+  //     setHeadingStored(true);
+  //     window.removeEventListener('deviceorientation', handleOrientation);
+  //   }
+  // };
   
   const showMap = () => setmapView(true);
   const hideMap = () => setmapView(false);
@@ -753,7 +853,6 @@ const Nav = () => {
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
           <div className='user-orientation'>
-            <div>{heading.toFixed(2)}</div>
             {/* <img src='compassArrow2.png' style={{height : "80px", width : "80px", transform: `rotate(${heading.toFixed(0)}deg)`}}></img> */}
           </div>
         </div>

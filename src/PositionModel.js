@@ -266,9 +266,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle }) => {
   }, [isModelLoaded, path, userPosCurr]);
 
   return (
-    <div className='path-map-containers' ref={containerRef}>
-      <div>{rotateAngle}</div>
-    </div>
+    <div className='path-map-containers' ref={containerRef}></div>
   );
 };
 
