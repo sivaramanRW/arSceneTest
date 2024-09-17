@@ -21,9 +21,7 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  //const { userLocDetected, userPosDetected} = location.state || {};
-  const userLocDetected = "TC";
-  const userPosDetected = "test";
+  const { userLocDetected, userPosDetected} = location.state || {};
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -175,7 +173,6 @@ const Nav = () => {
 
     const setReferenceSpace = async () => {
       try {
-        console.log('referanceSpace')
         await session.requestReferenceSpace('local-floor');
         renderer.xr.setReferenceSpaceType('local-floor');
       } catch (e) {
