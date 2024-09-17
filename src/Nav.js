@@ -21,7 +21,9 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  const { userLocDetected, userPosDetected} = location.state || {};
+  //const { userLocDetected, userPosDetected} = location.state || {};
+  const userLocDetected = "TC";
+  const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -45,7 +47,7 @@ const Nav = () => {
   const [turnDirection, setTurnDirection] = useState('');
   const [announcedDirection, setAnnouncedDirection] = useState(null);
   const [navigationStarted, setNavigationStarted] = useState(false);
-  const [heading, setHeading] = useState(0);
+  const [heading, setHeading] = useState(80);
   const [headingStored, setHeadingStored] = useState(false);
   const [offset, setOffset] = useState(0);
   const [mapView, setmapView] = useState(false);
@@ -619,13 +621,9 @@ const Nav = () => {
         window.removeEventListener('deviceorientation', handleOrientationIos);
       };
     }else{
-      handleOrientationOtherDevices();
+      console.log('Compass not Supported');
+      alert('Compass not Supported');
     }
-  }
-
-  const handleOrientationOtherDevices = () =>{
-    console.log('other devices');
-    setHeading(80);
   }
 
   const handleOrientationAndroid = (event) => {

@@ -8,6 +8,7 @@ import { findTurningPoints } from './TurningPoints';
 import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
 import { TrackingPointsDegree } from './TrackingPointsDegree';
 import { TrackingPointsAdjust } from './TrackingPointsAdjust';
+import { height } from '@fortawesome/free-solid-svg-icons/fa0';
 
 const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
@@ -117,8 +118,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   const containerRef = useRef(null);
   const modelRef = useRef(null);
   const cubeRef = useRef(null);
-  const [button, setButton] = useState(true);
-  let userPos = modelCoordinates[path];
+  const cameraRef = useRef(null);
   const pathCoordinates = path.map(point => modelCoordinates[point]);
   const modelApla = transformCoordinates(pathCoordinates, labels);
   const InterKeys = findTurningPoints(modelApla);
@@ -127,15 +127,15 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   }
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [userPos, setUserPos] = useState(path[0]);
 
   useEffect(() => {
-
-    setButton(false);
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(120, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(convertedCoordinates[0][0], 0.15, convertedCoordinates[0][1]);
+    cameraRef.current = camera;
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
@@ -256,18 +256,25 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
   }, []);
 
+  const locateuser = () => {
+    cameraRef.current.position.set(modelCoordinates[userPos][0], 0.6, modelCoordinates[userPos][1]);
+  }
+
   useEffect(() => {
     if (isModelLoaded && cubeRef.current) {
       const TrackingPoints = TrackPointsConvert(path[0]);
       const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
       const TrackingPointsAdjustment = TrackingPointsAdjust(TrackingPointsDegreebased, adjustAngle);
       const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z], path[0]);
+      setUserPos(TrackedPosition);
       cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
     }
   }, [isModelLoaded, path, userPosCurr]);
 
   return (
-    <div className='path-map-containers' ref={containerRef}></div>
+    <div className='path-map-containers' ref={containerRef}>
+      <div className = "locate-user" onClick={locateuser}>locate</div>
+    </div>
   );
 };
 
