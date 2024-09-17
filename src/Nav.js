@@ -21,7 +21,9 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  const { userLocDetected, userPosDetected} = location.state || {};
+  //const { userLocDetected, userPosDetected} = location.state || {};
+  const userLocDetected = "TC";
+  const userPosDetected = "test";
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -56,6 +58,7 @@ const Nav = () => {
   let secondAdjust = useRef(null);
   let [Finalpoints, setFinalPoints] = useState(0);
   const angle = (4 * Math.PI) / 180;
+  const [totalRotationAngle, setTotalRotationAngle] = useState(0);
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -376,7 +379,11 @@ const Nav = () => {
 
     const center = Finalpoints[0]; 
     const theta = direction === 'left' ? angle : -angle;
-    
+    setTotalRotationAngle(prevAngle => {
+      const newAngle = prevAngle + (direction === 'left' ? angle : -angle);
+      console.log('Total rotation angle:', newAngle * (180 / Math.PI), 'degrees');
+      return newAngle;
+    });
     const newPoints = Finalpoints.map((point, index) => {
      return index === 0 ? point : rotatePoint(point, center, theta);
     });
@@ -616,9 +623,13 @@ const Nav = () => {
         window.removeEventListener('deviceorientation', handleOrientationIos);
       };
     }else{
-      console.log('other devices');
-      alert('other devices');
+      handleOrientationOtherDevices();
     }
+  }
+
+  const handleOrientationOtherDevices = () =>{
+    console.log('other devices');
+    setHeading(80);
   }
 
   const handleOrientationAndroid = (event) => {
@@ -666,62 +677,6 @@ const Nav = () => {
     }
     
   };
-
-  // const GetHeading = () => {
-  //   if (!headingStored && window.DeviceOrientationEvent) {
-  //     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-  //       DeviceOrientationEvent.requestPermission()
-  //         .then((response) => {
-  //           if (response === 'granted') {
-  //             window.addEventListener('deviceorientation', handleOrientation, true);
-  //           } else {
-  //             alert('Permission to access device orientation was denied.');
-  //           }
-  //         })
-  //         .catch((error) => {
-  //           console.error('Error requesting device orientation permission:', error);
-  //           alert('Permission request failed.');
-  //         });
-  //     } else {
-  //       window.addEventListener('deviceorientation', handleOrientation, true);
-  //     }
-  //   } else if (!headingStored) {
-  //     alert("Sorry, your browser doesn't support Device Orientation");
-  //   }
-  
-  //   return () => {
-  //     window.removeEventListener('deviceorientation', handleOrientation);
-  //   };
-  // };
-  
-  // const handleOrientation = (event) => {
-  //   let direction;
-  
-  //   if (event.webkitCompassHeading) {
-  //     direction = event.webkitCompassHeading;
-  //   } else if (event.absolute && event.alpha !== null) {
-  //     direction = 360 - event.alpha;
-  
-  //     if (isAndroid()) {
-  //       const screenOrientation = window.screen.orientation.angle || window.orientation || 0;
-  //       direction = (direction + screenOrientation) % 360;
-  //     }
-  //   } else if (event.alpha !== null && !isAndroid()) {
-  //     direction = 360 - event.alpha;
-  //   } else if (event.gamma !== null && event.beta !== null) {
-  //     const radians = Math.atan2(event.gamma, event.beta);
-  //     const degrees = radians * 180 / Math.PI;
-  //     direction = (360 - degrees + 90) % 360;
-  //   }
-  
-  //   if (direction !== undefined && count === 0) {
-  //     direction = (direction + offset + 360) % 360;
-  //     setHeading(direction);
-  //     count = count + 1;
-  //     setHeadingStored(true);
-  //     window.removeEventListener('deviceorientation', handleOrientation);
-  //   }
-  // };
   
   const showMap = () => setmapView(true);
   const hideMap = () => setmapView(false);
@@ -762,7 +717,7 @@ const Nav = () => {
           <div className='position-model'>
             <div style={{position : "relative", height : "100%", width : "100%"}}>
               <div className = "position-model-close" onClick={HideModelposition}><FaTimes /></div>
-              <PositionModel path = {modelPath} userPosCurr = {userPosition} rotateAngle = {heading.toFixed(0)}/>
+              <PositionModel path = {modelPath} userPosCurr = {userPosition} rotateAngle = {heading.toFixed(0)} adjustAngle = {totalRotationAngle} />
             </div>
           </div>
         )}
