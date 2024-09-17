@@ -21,9 +21,7 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  //const { userLocDetected, userPosDetected} = location.state || {};
-  const userLocDetected = "TC";
-  const userPosDetected = "test";
+  const { userLocDetected, userPosDetected} = location.state || {};
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -52,6 +50,7 @@ const Nav = () => {
   const [offset, setOffset] = useState(0);
   const [mapView, setmapView] = useState(false);
   const isAndroid = () => /Android/i.test(navigator.userAgent);
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
   let firstAdjust = useRef(null);
   let secondAdjust = useRef(null);
@@ -580,24 +579,24 @@ const Nav = () => {
   }
 
   const GetHeading = () => {
-    if(isAndroid){
+    if(/android/i.test(userAgent)){
       if (!headingStored && window.DeviceOrientationEvent) {
         if (typeof DeviceOrientationEvent.requestPermission !== 'function') {
-          window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+          window.addEventListener('deviceorientationabsolute', handleOrientationAndroid, true);
         }
       } else if (!headingStored) {
         alert("Sorry, your browser doesn't support Device Orientation");
       }
       return () => {
-        window.removeEventListener('deviceorientationabsolute', handleOrientation);
+        window.removeEventListener('deviceorientationabsolute', handleOrientationAndroid);
       };
-    }else{
+    } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream){
       if (!headingStored && window.DeviceOrientationEvent) {
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
           DeviceOrientationEvent.requestPermission()
             .then((response) => {
               if (response === 'granted') {
-                window.addEventListener('deviceorientation', handleOrientation, true);
+                window.addEventListener('deviceorientation', handleOrientationIos, true);
               } else {
                 alert('Permission to access device orientation was denied.');
               }
@@ -607,60 +606,65 @@ const Nav = () => {
               alert('Permission request failed.');
             });
         } else {
-          window.addEventListener('deviceorientation', handleOrientation, true);
+          window.addEventListener('deviceorientation', handleOrientationIos, true);
         }
       } else if (!headingStored) {
         alert("Sorry, your browser doesn't support Device Orientation");
       }
     
       return () => {
-        window.removeEventListener('deviceorientation', handleOrientation);
+        window.removeEventListener('deviceorientation', handleOrientationIos);
       };
+    }else{
+      console.log('other devices');
+      alert('other devices');
     }
   }
+
+  const handleOrientationAndroid = (event) => {
+    let direction;
+      if (event.webkitCompassHeading) {
+        direction = event.webkitCompassHeading;
+      } else if (event.absolute && event.alpha !== null) {
+        direction = 360 - event.alpha;
+      }
+      
+      if (direction !== undefined && count === 0) {
+        direction = (direction + offset + 360) % 360;
+        setHeading(direction);
+        count = count + 1;
+        setHeadingStored(true);
+        window.removeEventListener('deviceorientationabsolute', handleOrientationAndroid);
+      }
+  }
  
-  const handleOrientation = (event) => {
-    if(isAndroid){
-      let direction;
-      if (event.webkitCompassHeading) {
-        direction = event.webkitCompassHeading;
-      } else if (event.absolute && event.alpha !== null) {
-        direction = 360 - event.alpha;
+  const handleOrientationIos = (event) => {
+    
+    let direction;
+    if (event.webkitCompassHeading) {
+      direction = event.webkitCompassHeading;
+    } else if (event.absolute && event.alpha !== null) {
+      direction = 360 - event.alpha;
+      if (isAndroid()) {
+        const screenOrientation = window.screen.orientation.angle || window.orientation || 0;
+        direction = (direction + screenOrientation) % 360;
       }
-      
-      if (direction !== undefined && count === 0) {
-        direction = (direction + offset + 360) % 360;
-        setHeading(direction);
-        count = count + 1;
-        setHeadingStored(true);
-        window.removeEventListener('deviceorientationabsolute', handleOrientation);
-      }
-    }else{
-      let direction;
-      if (event.webkitCompassHeading) {
-        direction = event.webkitCompassHeading;
-      } else if (event.absolute && event.alpha !== null) {
-        direction = 360 - event.alpha;
-        if (isAndroid()) {
-          const screenOrientation = window.screen.orientation.angle || window.orientation || 0;
-          direction = (direction + screenOrientation) % 360;
-        }
-      } else if (event.alpha !== null && !isAndroid()) {
-        direction = 360 - event.alpha;
-      } else if (event.gamma !== null && event.beta !== null) {
-        const radians = Math.atan2(event.gamma, event.beta);
-        const degrees = radians * 180 / Math.PI;
-        direction = (360 - degrees + 90) % 360;
-      }
-      
-      if (direction !== undefined && count === 0) {
-        direction = (direction + offset + 360) % 360;
-        setHeading(direction);
-        count = count + 1;
-        setHeadingStored(true);
-        window.removeEventListener('deviceorientation', handleOrientation);
-      }
+    } else if (event.alpha !== null && !isAndroid()) {
+      direction = 360 - event.alpha;
+    } else if (event.gamma !== null && event.beta !== null) {
+      const radians = Math.atan2(event.gamma, event.beta);
+      const degrees = radians * 180 / Math.PI;
+      direction = (360 - degrees + 90) % 360;
     }
+      
+    if (direction !== undefined && count === 0) {
+      direction = (direction + offset + 360) % 360;
+      setHeading(direction);
+      count = count + 1;
+      setHeadingStored(true);
+      window.removeEventListener('deviceorientation', handleOrientationIos);
+    }
+    
   };
 
   // const GetHeading = () => {

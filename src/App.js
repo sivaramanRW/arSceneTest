@@ -1,11 +1,9 @@
-// src/App.js
 import React from 'react';
 import './App.css';
 import Interele from './Interele';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Nav from './Nav';
 import Camera from './camera';
-import CompassHeading from './CompassHeading';
 
 function App() {
   return (
@@ -15,7 +13,6 @@ function App() {
         <Route path = "/" element = {<Interele />}/>
         <Route path = "/navwebxr" element = {<Nav />}/>
         <Route path = "/camera" element = {<Camera />}/>
-        <Route path = "/ios" element = {<CompassHeading />}/>
       </Routes>
     </Router></div>
   );
