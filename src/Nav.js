@@ -47,7 +47,7 @@ const Nav = () => {
   const [turnDirection, setTurnDirection] = useState('');
   const [announcedDirection, setAnnouncedDirection] = useState(null);
   const [navigationStarted, setNavigationStarted] = useState(false);
-  const [heading, setHeading] = useState(80);
+  const [heading, setHeading] = useState(0);
   const [headingStored, setHeadingStored] = useState(false);
   const [offset, setOffset] = useState(0);
   const [mapView, setmapView] = useState(false);
@@ -138,7 +138,7 @@ const Nav = () => {
       });
       console.log('session :', session);
       initializeARScene(session);
-      GetHeading();
+      count += 1;
     } catch (e) {
       console.error('Error starting AR session:', e);
       alert('Failed to start AR',e);
@@ -583,7 +583,7 @@ const Nav = () => {
     addLabel(labelText, x, 0.7, y); 
   }
 
-  const GetHeading = () => {
+  useEffect(() => {
     if(/android/i.test(userAgent)){
       if (!headingStored && window.DeviceOrientationEvent) {
         if (typeof DeviceOrientationEvent.requestPermission !== 'function') {
@@ -624,7 +624,7 @@ const Nav = () => {
       console.log('Compass not Supported');
       alert('Compass not Supported');
     }
-  }
+  }, []);
 
   const handleOrientationAndroid = (event) => {
     let direction;
@@ -637,7 +637,6 @@ const Nav = () => {
       if (direction !== undefined && count === 0) {
         direction = (direction + offset + 360) % 360;
         setHeading(direction);
-        count = count + 1;
         setHeadingStored(true);
         window.removeEventListener('deviceorientationabsolute', handleOrientationAndroid);
       }
@@ -665,7 +664,6 @@ const Nav = () => {
     if (direction !== undefined && count === 0) {
       direction = (direction + offset + 360) % 360;
       setHeading(direction);
-      count = count + 1;
       setHeadingStored(true);
       window.removeEventListener('deviceorientation', handleOrientationIos);
     }
@@ -858,6 +856,7 @@ const Nav = () => {
         <div className='floor-map-container'>
           <MapModel path = {userLocDetected} />
         </div>
+        <div>{heading.toFixed(2)}</div>
          <button className="custom-ar-button" onClick={startAR}> Start</button>
       </div>
     )}
