@@ -1,7 +1,5 @@
 export const TrackingPointsAdjust = (convertedCoords, angle) => {
 
-    console.log('adjust angle', angle);
-
     const rotatedCoordinates = {};
 
     for (const point in convertedCoords) {

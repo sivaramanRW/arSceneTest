@@ -260,9 +260,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     if (isModelLoaded && cubeRef.current) {
       const TrackingPoints = TrackPointsConvert(path[0]);
       const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
-      console.log('TrackingPointsDegreebased', TrackingPointsDegreebased);
       const TrackingPointsAdjustment = TrackingPointsAdjust(TrackingPointsDegreebased, adjustAngle);
-      console.log('TrackingPointsAdjustment', TrackingPointsAdjustment);
       const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z], path[0]);
       cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
     }

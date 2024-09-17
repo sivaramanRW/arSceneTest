@@ -315,14 +315,13 @@ const Nav = () => {
 
         const degree = heading.toFixed(0);
         const degreebasedPoints = CoordinatesChange(pointsInterKeys, degree);
-        console.log('degreebasedPoints',degreebasedPoints)
 
         const convertedObject = labels.slice(0, degreebasedPoints.length).reduce((acc, label, index) => {
           acc[label] = { x: degreebasedPoints[index][0], y: degreebasedPoints[index][1] };
           return acc;
         }, {});
 
-        console.log('converted',convertedObject);
+        console.log('degreebasedPoints',convertedObject);
 
         setFoundPathPoints(convertedObject);
         setDistance(totalDistance);
@@ -381,7 +380,6 @@ const Nav = () => {
     const theta = direction === 'left' ? angle : -angle;
     setTotalRotationAngle(prevAngle => {
       const newAngle = prevAngle + (direction === 'left' ? angle : -angle);
-      console.log('Total rotation angle:', newAngle * (180 / Math.PI), 'degrees');
       return newAngle;
     });
     const newPoints = Finalpoints.map((point, index) => {
@@ -403,6 +401,7 @@ const Nav = () => {
 
   const handleGo = () => {
 
+    console.log('adjusted angle', totalRotationAngle);
     console.log('FP', foundPathPoints);
     const keys = findTurningPoints(foundPathPoints);
     console.log('interkeys', keys);

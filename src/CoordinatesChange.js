@@ -1,7 +1,4 @@
 export const CoordinatesChange = (originaldPath, cameradAngles) =>{
-
-    console.log('CoordinatesChange points', originaldPath);
-    console.log('CoordinatesChange angle', cameradAngles);
     
     const originalPath = originaldPath.map(({x, y}) => [x, y]);
     const cameraAngles = cameradAngles;

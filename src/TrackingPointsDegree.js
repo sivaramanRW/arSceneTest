@@ -1,7 +1,4 @@
 export const TrackingPointsDegree = (originalPoints, cameraAngles) => {
-
-  console.log('tracking points', originalPoints);
-  console.log('tracking angle', cameraAngles);
   
   const adjustedPoints = adjustPoints(originalPoints, cameraAngles);
   
