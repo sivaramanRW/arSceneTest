@@ -2,13 +2,13 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import './PathModel.css';
+import './PositionModel.css';
 import { useState } from 'react';
 import { findTurningPoints } from './TurningPoints';
 import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
 import { TrackingPointsDegree } from './TrackingPointsDegree';
 import { TrackingPointsAdjust } from './TrackingPointsAdjust';
-import { height } from '@fortawesome/free-solid-svg-icons/fa0';
+import { FaMapMarkerAlt  } from 'react-icons/fa';
 
 const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
@@ -272,8 +272,11 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   }, [isModelLoaded, path, userPosCurr]);
 
   return (
-    <div className='path-map-containers' ref={containerRef}>
-      <div className = "locate-user" onClick={locateuser}>locate</div>
+    <div style={{height : "100%", width : "100%"}}>
+      <div className='position-map-containers' ref={containerRef}></div>
+      <div className = "locate-user" onClick={locateuser}>
+        <img src='app.png' style={{height : "20px", width : "20px"}}></img>
+      </div>
     </div>
   );
 };
