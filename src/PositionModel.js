@@ -8,6 +8,7 @@ import { findTurningPoints } from './TurningPoints';
 import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
 import { TrackingPointsDegree } from './TrackingPointsDegree';
 import { TrackingPointsAdjust } from './TrackingPointsAdjust';
+import { graph, coordinates, dijkstra } from './graphData.js';
 
 const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
@@ -51,15 +52,25 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   const modelRef = useRef(null);
   const cubeRef = useRef(null);
   const cameraRef = useRef(null);
+  const orbitRef = useRef(null);
   const pathCoordinates = path.map(point => modelCoordinates[point]);
   const modelApla = transformCoordinates(pathCoordinates, labels);
   const InterKeys = findTurningPoints(modelApla);
-  for (let i = 0; i < InterKeys.length; i++) {
-    ModelPathTemp.push(modelApla[InterKeys[i]]);
-  }
+  for (let i = 0; i < InterKeys.length; i++) {ModelPathTemp.push(modelApla[InterKeys[i]]);}
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
   const [userPos, setUserPos] = useState(path[0]);
+
+  const getOrbitPoint = (firstPoint, nextPoint, id) => {
+    let distance = 0;
+    if(id === 'model') { distance = 0.5; } else { distance = 0.1; }
+    let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
+    let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
+    let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
+    let movement = [unitVector[0] * distance, unitVector[1] * distance];
+    let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
+    return newPosition;
+  }
 
   useEffect(() => {
 
@@ -87,16 +98,11 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     controls.screenSpacePanning = false;
     controls.minDistance = 1;
     controls.maxDistance = 100;
+    orbitRef.current = controls;
 
     const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1])
     const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1])
-   
-    let distance = 0.1;
-    let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
-    let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
-    let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
-    let movement = [unitVector[0] * distance, unitVector[1] * distance];
-    let newPosition = [firstPoint.x + movement[0], firstPoint.z + movement[1]];
+    const newPosition = getOrbitPoint(firstPoint, nextPoint, 'AR');
     controls.target.set(newPosition[0], 0, newPosition[1]);
     
     const loader = new GLTFLoader();
@@ -189,8 +195,15 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   }, []);
 
   const locateuser = () => {
-    console.log('user pos point', modelCoordinates[userPos]);
-    cameraRef.current.position.set(modelCoordinates[userPos][0], 0.6, modelCoordinates[userPos][1]);
+    const [foundPath, totalDistance] = dijkstra(graph, userPos, path[path.length-1]);
+    const firstPoint = new THREE.Vector3(modelCoordinates[foundPath[0]][0], 0 , modelCoordinates[foundPath[0]][1])
+    const nextPoint = new THREE.Vector3(modelCoordinates[foundPath[1]][0], 0 , modelCoordinates[foundPath[1]][1])
+    console.log('f', firstPoint);
+    console.log('n', nextPoint);
+    const orbitTarget = getOrbitPoint(firstPoint, nextPoint, 'model');
+    console.log('OT', orbitTarget);
+    cameraRef.current.position.set(modelCoordinates[userPos][0], 0.7, modelCoordinates[userPos][1]);
+    orbitRef.current.target.set(orbitTarget[0], 0, orbitTarget[1]);
   }
 
   useEffect(() => {
