@@ -21,9 +21,7 @@ let count = 0;
 const Nav = () => {
 
   const location = useLocation();
-  //const { userLocDetected, userPosDetected} = location.state || {};
-  const userLocDetected = "TC";
-  const userPosDetected = "test";
+  const { userLocDetected, userPosDetected} = location.state || {};
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const modelRef = useRef(null);
@@ -856,7 +854,7 @@ const Nav = () => {
         <div className='floor-map-container'>
           <MapModel path = {userLocDetected} />
         </div>
-        <div>{heading.toFixed(2)}</div>
+        {/* <div>{heading.toFixed(2)}</div> */}
          <button className="custom-ar-button" onClick={startAR}> Start</button>
       </div>
     )}
