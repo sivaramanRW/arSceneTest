@@ -164,7 +164,7 @@ const FloorMap = ({ path }) => {
     controls.target.set(newPosition[0], 0, newPosition[1]);
     
     const loader = new GLTFLoader();
-    loader.load('floor3d.glb', function (gltf) {
+    loader.load('floor3d2.glb', function (gltf) {
       const model = gltf.scene;
       scene.add(model);
       modelRef.current = model;

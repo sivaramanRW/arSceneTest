@@ -23,7 +23,7 @@ const Nav = () => {
 
     const location = useLocation();
     //const { userLocDetected, userPosDetected} = location.state || {}
-    const userLocDetected = "TC";
+    const userLocDetected = "TB";
     const userPosDetected = "room";
     const mountRef = useRef(null);
     const sceneRef = useRef(null);
@@ -758,7 +758,9 @@ const Nav = () => {
         {PositionModelShow &&(
           <div className='position-model'>
             <div style={{position : "relative", height : "100%", width : "100%"}}>
-              <div className = "position-model-close" onClick={HideModelposition}><FaTimes /></div>
+              <div className = "position-model-close" onClick={HideModelposition}>
+                <img src = 'ARviewIcon.png' style={{height : "30px", width : "30px"}}></img>
+              </div>
               <PositionModel path = {modelPath} userPosCurr = {userPosition} rotateAngle = {heading.toFixed(0)} adjustAngle = {totalRotationAngle} />
             </div>
           </div>

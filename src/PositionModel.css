@@ -9,15 +9,15 @@
 
 .locate-user {
     position: absolute;
-    top: 63%; 
-    right: 10px; 
+    bottom: 11%; 
+    right: 4%; 
     z-index: 10; 
     background-color: #cccccc; 
     padding: 5px;
     cursor: pointer; 
     border-radius: 50%;
-    height: 20px;
-    width: 20px;
+    height: 30px;
+    width: 30px;
     display: flex;
     justify-content: center;
     place-items: center;

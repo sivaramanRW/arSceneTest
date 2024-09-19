@@ -61,9 +61,8 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   const [isModelLoaded, setIsModelLoaded] = useState(false);
   const [userPos, setUserPos] = useState(path[0]);
 
-  const getOrbitPoint = (firstPoint, nextPoint, id) => {
-    let distance = 0;
-    if(id === 'model') { distance = 0.5; } else { distance = 0.1; }
+  const getOrbitPoint = (firstPoint, nextPoint) => {
+    let distance = 0.6;
     let direction = [nextPoint.x - firstPoint.x, nextPoint.z - firstPoint.z];
     let magnitude = Math.sqrt(direction[0] ** 2 + direction[1] ** 2);
     let unitVector = [direction[0] / magnitude, direction[1] / magnitude];
@@ -72,12 +71,17 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     return newPosition;
   }
 
+  const getCameraPosition = (midpoint, pointA) => {
+    const x2 = (2 * midpoint[0]) - pointA[0];
+    const y2 = (2 * midpoint[1]) - pointA[1];
+    return [x2, y2];
+  };
+
   useEffect(() => {
 
     const container = containerRef.current;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(120, container.clientWidth / container.clientHeight, 0.1, 1000);
-    camera.position.set(convertedCoordinates[0][0], 0.15, convertedCoordinates[0][1]);
     cameraRef.current = camera;
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1);
@@ -102,11 +106,13 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
     const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1])
     const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1])
-    const newPosition = getOrbitPoint(firstPoint, nextPoint, 'AR');
+    const newPosition = getOrbitPoint(firstPoint, nextPoint);
+    const cameraPosition = getCameraPosition(convertedCoordinates[0],newPosition);
+    camera.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
     controls.target.set(newPosition[0], 0, newPosition[1]);
     
     const loader = new GLTFLoader();
-    loader.load('floor3d.glb', function (gltf) {
+    loader.load('floor3d2.glb', function (gltf) {
       const model = gltf.scene;
       scene.add(model);
       modelRef.current = model;
@@ -206,8 +212,9 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     const [foundPath, totalDistance] = dijkstra(graph, userPos, path[path.length-1]);
     const firstPoint = new THREE.Vector3(modelCoordinates[foundPath[0]][0], 0 , modelCoordinates[foundPath[0]][1])
     const nextPoint = new THREE.Vector3(modelCoordinates[foundPath[1]][0], 0 , modelCoordinates[foundPath[1]][1])
-    const orbitTarget = getOrbitPoint(firstPoint, nextPoint, 'model');
-    cameraRef.current.position.set(modelCoordinates[userPos][0], 0.7, modelCoordinates[userPos][1]);
+    const orbitTarget = getOrbitPoint(firstPoint, nextPoint);
+    const cameraPosition = getCameraPosition(modelCoordinates[foundPath[0]],orbitTarget);
+    cameraRef.current.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
     orbitRef.current.target.set(orbitTarget[0], 0, orbitTarget[1]);
   }
 
@@ -226,7 +233,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     <div style={{height : "100%", width : "100%"}}>
       <div className='position-map-containers' ref={containerRef}></div>
       <div className = "locate-user" onClick={locateuser}>
-        <img src='app.png' style={{height : "20px", width : "20px"}}></img>
+        <img src='app.png' style={{height : "30px", width : "30px"}}></img>
       </div>
     </div>
   );

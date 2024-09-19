@@ -139,7 +139,7 @@ const FloorMap = ({ path }) => {
     let model;
     const loader = new GLTFLoader();
     loader.load(
-      'floor3d.glb',
+      'floor3d2.glb',
       (gltf) => {
         model = gltf.scene;
         scene.add(model);
