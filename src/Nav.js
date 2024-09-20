@@ -22,8 +22,8 @@ let count = 0;
 const Nav = () => {
 
     const location = useLocation();
-    //const { userLocDetected, userPosDetected} = location.state || {}
-    const userLocDetected = "TB";
+    //const { userLocDetected, userPosDetected} = location.state || {};
+    const userLocDetected = "TN";
     const userPosDetected = "room";
     const mountRef = useRef(null);
     const sceneRef = useRef(null);
@@ -47,7 +47,7 @@ const Nav = () => {
     const [turnDirection, setTurnDirection] = useState('');
     const [announcedDirection, setAnnouncedDirection] = useState(null);
     const [navigationStarted, setNavigationStarted] = useState(false);
-    const [heading, setHeading] = useState(0);
+    const [heading, setHeading] = useState(80);
     const [headingStored, setHeadingStored] = useState(false);
     const [offset, setOffset] = useState(0);
     const [mapView, setmapView] = useState(false);
@@ -57,13 +57,8 @@ const Nav = () => {
     const [showScanInstructions, setShowScanInstructions] = useState(false);
     const [PositionModelShow, setPositionModelShow] = useState(false);
     const [totalRotationAngle, setTotalRotationAngle] = useState(0);
-  
-  
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isAndroid = () => /Android/i.test(navigator.userAgent);
-  
-    
-  
     let firstAdjust = useRef(null);
     let secondAdjust = useRef(null);
     let [Finalpoints, setFinalPoints] = useState(0);
@@ -750,7 +745,7 @@ const Nav = () => {
         {arStarted && !showContainer && !destinationReached && showDistance &&(
           <div style={{height : "30%", width : "100%", display : "flex", justifyContent : "flex-start", paddingLeft : "85%", placeItems : "center"}}>
             <div className = "position-map-icon" onClick={ShowModelposition}>
-              <img src='map.png' alt = "map" style={{height : "20px", width : "20px"}}></img>
+              <img src='map.png' alt = "map" style={{height : "25px", width : "25px"}}></img>
             </div>
           </div>
         )}

@@ -8,33 +8,103 @@ import { findTurningPoints } from './TurningPoints';
 import { TrackPointsConvert, findClosestPoint } from './TrackPointsConvert';
 import { TrackingPointsDegree } from './TrackingPointsDegree';
 import { TrackingPointsAdjust } from './TrackingPointsAdjust';
-import { graph, coordinates, dijkstra } from './graphData.js';
+import { graph, dijkstra } from './graphData.js';
 
 const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
   const modelCoordinates = {
-    "BF": [0.1, 13], "BG": [-1, 13], "BH": [-2, 13], "BI": [-3, 13],
-    "BJ": [-4, 13], "BK": [-5, 13], "B": [0.1, 11], "BA": [-1, 11],
-    "BB": [-2, 11], "BC": [-3, 11], "BD": [-4, 11], "BE": [-5, 11],
-    "CA": [2, 11], "CB": [2, 13], "CC": [2, 9], "CD": [3.5, 9],
-    "CE": [4.5, 9], "CF": [4.5, 11], "CG": [4.5, 13], "D": [0.1, 9.5],
-    "DA": [-1.5, 9.5], "DB": [-3.5, 9.5], "DC": [-4.5, 9.5], "F": [0.1, 7.3],
-    "G": [-2.5, 7.3], "H": [0.1, 5.3], "AC": [0.1, 4], "HA": [2, 5.3],
-    "HH": [2, 7], "HD": [2, 4], "HE": [3.5, 4], "HF": [4.5, 4],
-    "HB": [3.5, 5.3], "HC": [4.5, 5.3], "HG": [4.5, 7], "J": [0.1, 1.7],
-    "JA": [2, 1.7], "JB": [3.3, 1.7], "JC": [4.5, 1.7], "L": [0.1, -1.5],
-    "LA": [2, -1.5], "LB": [3.3, -1.5], "LC": [4.5, -1.5], "P": [0.1, -4.2],
-    "PA": [2, -4.2], "PB": [3.3, -4.2], "PC": [4.5, -4.2], "R": [0.1, -7.5],
-    "RA": [2, -7.5], "RB": [3.3, -7.5], "RC": [4.5, -7.5], "T": [0.1, -10.2],
-    "TA": [2, -10.2], "TB": [3.3, -10.2], "TC": [4.5, -10.2], "W": [0.1, -12.7],
-    "WA": [2, -12.7], "WB": [3.3, -12.7], "WC": [4.5, -12.7], "TD": [-1.6, -10.2],
-    "TE": [-2.4, -10.2], "TF": [-3.3, -10.2], "TG": [-4.2, -10.2], "TH": [-5, -10.2],
-    "TI": [-1.6, -12], "TJ": [-1.6, -13.1], "TK": [-2.4, -13.1], "TL": [-3.3, -13.1],
-    "TM": [-4.2, -13.1], "TN": [-5, -13.1], "RD": [-1.6, -7.5], "RE": [-2.5, -7.5],
-    "RF": [-3.5, -7.5], "RG": [-4.5, -7.5], "RI": [-1.6, -8.5], "RH": [-4.5, -8.5],
-    "RJ": [-1.6, -5], "RL": [-3.3, -5], "RK": [-4.5, -5], "AA": [0.1, 6.3],
-    "AB": [0.1, 4.5], "AD": [0.1, 3], "AE": [0.1, 0], "AF": [0.1, -2.5],
-    "N": [0.1, -3.3], "AH": [0.1, -8], "AI": [0.1, -9], "O": [-3, -3.3], "AG": [0.1, -6]
+    "BF": [0.1, 13],
+    "BG": [-1, 13],
+    "BH": [-2, 13],
+    "BI": [-3, 13],
+    "BJ": [-4, 13],
+    "BK": [-5, 13],
+    "B": [0.1, 11],
+    "BA": [-1, 11],
+    "BB": [-2, 11],
+    "BC": [-3, 11],
+    "BD": [-4, 11],
+    "BE": [-5, 11],
+    "BL": [-3.5, 12.35],
+    "CA": [2, 11],
+    "CH": [3.25, 11],
+    "CB": [2, 13],
+    "CC": [2, 9],
+    "CD": [3.5, 9],
+    "CE": [4.5, 9],
+    "CF": [4.5, 11],
+    "CG": [4.5, 13],
+    "D": [0.1, 9.5],
+    "DA": [-1.5, 9.5],
+    "DB": [-3.5, 9.5],
+    "DC": [-4.5, 9.5],
+    "F": [0.1, 7.3],
+    "G": [-2.5, 5.5],
+    "H": [0.1, 5.3],
+    "AC": [0.1, 4],
+    "HA": [2, 5.3],
+    "HH": [2, 7],
+    "HD": [2, 4],
+    "HE": [3.5, 4],
+    "HF": [4.5, 4],
+    "HB": [3.5, 5.3],
+    "HC": [4.5, 5.3],
+    "HG": [4.5, 7],
+    "J": [0.1, 1.7],
+    "JA": [2, 1.7],
+    "JB": [3.3, 1.7],
+    "JC": [4.5, 1.7],
+    "L": [0.1, -1.5],
+    "LA": [2, -1.5],
+    "LB": [3.3, -1.5],
+    "LC": [4.5, -1.5],
+    "P": [0.1, -4.2],
+    "PA": [2, -4.2],
+    "PB": [3.3, -4.2],
+    "PC": [4.5, -4.2],
+    "R": [0.1, -7.5],
+    "RA": [2, -7.5],
+    "RB": [3.3, -7.5],
+    "RC": [4.5, -7.5],
+    "T": [0.1, -10.2],
+    "TA": [2, -10.2],
+    "TB": [3.3, -10.2],
+    "TC": [4.5, -10.2],
+    "W": [0.1, -12.7],
+    "WA": [2, -12.7],
+    "WB": [3.3, -12.7],
+    "WC": [4.5, -12.7],
+    "TD": [-1.6, -10.2],
+    "TE": [-2.4, -10.2],
+    "TF": [-3.3, -10.2],
+    "TG": [-4.2, -10.2],
+    "TH": [-5, -10.2],
+    "TI": [-1.6, -12],
+    "TJ": [-1.6, -13.1],
+    "TK": [-2.4, -13.1],
+    "TL": [-3.3, -13.1],
+    "TM": [-4.2, -13.1],
+    "TN": [-5, -13.1],
+    "TO": [-3.5, -11.5],
+    "RD": [-1.6, -7.5],
+    "RE": [-2.5, -7.5],
+    "RF": [-3.5, -7.5],
+    "RG": [-4.5, -7.5],
+    "RI": [-2.5, -8.5],
+    "RH": [-4.5, -8.5],
+    "RJ": [-2.5, -5],
+    "RL": [-3.5, -6],
+    "RK": [-4.5, -5],
+    "AA": [0.1, 6.3],
+    "AB": [0.1, 4.5],
+    "AD": [0.1, 3],
+    "AE": [0.1, 0],
+    "AF": [0.1, -2.5],
+    "N": [0.1, -3.3],
+    "AH": [0.1, -8],
+    "AI": [0.1, -9],
+    "O": [-3, -3.3],
+    "AG": [0.1, -6]
   };
 
   const labels = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
@@ -60,6 +130,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   const convertedCoordinates = ModelPathTemp.map(coord => [coord.x, coord.y]);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
   const [userPos, setUserPos] = useState(path[0]);
+  const [TrackingPointsStore, setTrackingPointsStore] = useState(0);
 
   const getOrbitPoint = (firstPoint, nextPoint) => {
     let distance = 0.6;
@@ -76,6 +147,18 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     const y2 = (2 * midpoint[1]) - pointA[1];
     return [x2, y2];
   };
+
+  useEffect(() => {
+    if (isModelLoaded && cubeRef.current) {
+      const TrackingPoints = TrackPointsConvert(path[0]);
+      setTrackingPointsStore(TrackingPoints);
+      const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
+      const TrackingPointsAdjustment = TrackingPointsAdjust(TrackingPointsDegreebased, adjustAngle);
+      const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z], path[0]);
+      setUserPos(TrackedPosition);
+      cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
+    }
+  }, [isModelLoaded, path, userPosCurr]); 
 
   useEffect(() => {
 
@@ -104,8 +187,8 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     controls.maxDistance = 100;
     orbitRef.current = controls;
 
-    const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1])
-    const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1])
+    const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1]);
+    const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1]);
     const newPosition = getOrbitPoint(firstPoint, nextPoint);
     const cameraPosition = getCameraPosition(convertedCoordinates[0],newPosition);
     camera.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
@@ -217,17 +300,6 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     cameraRef.current.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
     orbitRef.current.target.set(orbitTarget[0], 0, orbitTarget[1]);
   }
-
-  useEffect(() => {
-    if (isModelLoaded && cubeRef.current) {
-      const TrackingPoints = TrackPointsConvert(path[0]);
-      const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
-      const TrackingPointsAdjustment = TrackingPointsAdjust(TrackingPointsDegreebased, adjustAngle);
-      const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z], path[0]);
-      setUserPos(TrackedPosition);
-      cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
-    }
-  }, [isModelLoaded, path, userPosCurr]);
 
   return (
     <div style={{height : "100%", width : "100%"}}>
