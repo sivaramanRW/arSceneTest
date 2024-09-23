@@ -59,7 +59,7 @@ const Nav = () => {
     let firstAdjust = useRef(null);
     let secondAdjust = useRef(null);
     let [Finalpoints, setFinalPoints] = useState(0);
-    const angle = (4 * Math.PI) / 180;
+    const angle = (2 * Math.PI) / 180;
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {

@@ -172,13 +172,20 @@ const FloorMap = ({ path }) => {
       scene.add(model);
       modelRef.current = model;
 
-      const geometry = new THREE.BoxGeometry();
-      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      const cube = new THREE.Mesh(geometry, material);
-      cube.scale.set(0.1, 0.1, 0.1);
-      cube.position.set(convertedCoordinates[0][0], 0.6, convertedCoordinates[0][1]);
-      model.add(cube);
-      cubeRef.current = cube;
+      loader.load(
+        'youarehereRed.glb',
+        (gltfMarker) => {
+          const markerModel = gltfMarker.scene;
+          markerModel.scale.set(0.12, 0.12, 0.12);
+          markerModel.position.set(convertedCoordinates[0][0], 0.6, convertedCoordinates[0][1]);
+          model.add(markerModel);
+          cubeRef.current = markerModel;
+        },
+        undefined,
+        (error) => {
+          console.error(error);
+        }
+      );
       
       for(let i = 0; i < convertedCoordinates.length; i++){
         let one = {x: convertedCoordinates[i][0], y : convertedCoordinates[i][1]};
