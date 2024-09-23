@@ -14,7 +14,6 @@ import MapModel from './MapModel.js';
 import PathModel from './PathModel.js'; 
 import PositionModel from './PositionModel.js';
 
-
 let selectedContent = {};
 let modelPath = [];
 let count = 0;
@@ -22,9 +21,7 @@ let count = 0;
 const Nav = () => {
 
     const location = useLocation();
-    //const { userLocDetected, userPosDetected} = location.state || {};
-    const userLocDetected = "TN";
-    const userPosDetected = "room";
+    const { userLocDetected, userPosDetected} = location.state || {};
     const mountRef = useRef(null);
     const sceneRef = useRef(null);
     const modelRef = useRef(null);

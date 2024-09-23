@@ -65,6 +65,7 @@ export const TrackPointsConvert = (startPoint) => {
 };
 
 export const findClosestPoint = (convertedCoords, randomCoord) => {
+
     let closestPoint = null;
     let closestDistance = Infinity;
 

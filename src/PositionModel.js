@@ -10,6 +10,8 @@ import { TrackingPointsDegree } from './TrackingPointsDegree';
 import { TrackingPointsAdjust } from './TrackingPointsAdjust';
 import { graph, dijkstra } from './graphData.js';
 
+let initialCam = 0;
+
 const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
   const modelCoordinates = {
@@ -151,10 +153,9 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   useEffect(() => {
     if (isModelLoaded && cubeRef.current) {
       const TrackingPoints = TrackPointsConvert(path[0]);
-      setTrackingPointsStore(TrackingPoints);
       const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
       const TrackingPointsAdjustment = TrackingPointsAdjust(TrackingPointsDegreebased, adjustAngle);
-      const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z], path[0]);
+      const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z]);
       setUserPos(TrackedPosition);
       cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
     }
@@ -187,10 +188,15 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
     controls.maxDistance = 100;
     orbitRef.current = controls;
 
-    const firstPoint = new THREE.Vector3(convertedCoordinates[0][0], 0, convertedCoordinates[0][1]);
-    const nextPoint = new THREE.Vector3(convertedCoordinates[1][0], 0, convertedCoordinates[1][1]);
+    const TrackingPoints = TrackPointsConvert(path[0]);
+    const TrackingPointsDegreebased = TrackingPointsDegree(TrackingPoints, rotateAngle);
+    const TrackingPointsAdjustment = TrackingPointsAdjust(TrackingPointsDegreebased, adjustAngle);
+    const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z]);
+    const [foundPath, totalDistance] = dijkstra(graph, TrackedPosition, path[path.length-1]);;
+    const firstPoint = new THREE.Vector3(modelCoordinates[foundPath[0]][0], 0 , modelCoordinates[foundPath[0]][1])
+    const nextPoint = new THREE.Vector3(modelCoordinates[foundPath[1]][0], 0 , modelCoordinates[foundPath[1]][1])
     const newPosition = getOrbitPoint(firstPoint, nextPoint);
-    const cameraPosition = getCameraPosition(convertedCoordinates[0],newPosition);
+    const cameraPosition = getCameraPosition(modelCoordinates[foundPath[0]],newPosition);
     camera.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
     controls.target.set(newPosition[0], 0, newPosition[1]);
     
