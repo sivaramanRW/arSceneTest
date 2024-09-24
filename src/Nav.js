@@ -60,6 +60,7 @@ const Nav = () => {
     let secondAdjust = useRef(null);
     let [Finalpoints, setFinalPoints] = useState(0);
     const angle = (2 * Math.PI) / 180;
+    const [headingAdjust, setHeadingAdjust] = useState(0);
 
   const speakTurnDirection = (direction) => {
     if ('speechSynthesis' in window && navigationStarted) {
@@ -344,6 +345,7 @@ const Nav = () => {
       setFloor(false);
       setMessage(selectedContent.path);
     }
+    setmapView(true);
   };
 
   const adjustmentPath = (points) => {
@@ -680,6 +682,10 @@ const Nav = () => {
         count = count + 1;
         setHeadingStored(true);
         window.removeEventListener('deviceorientationabsolute', handleOrientationAndroid);
+      }else{
+        direction = (direction + offset + 360) % 360;
+        setHeadingAdjust(direction);
+        window.removeEventListener('deviceorientationabsolute', handleOrientationAndroid);
       }
   }
  
@@ -707,6 +713,10 @@ const Nav = () => {
       setHeading(direction);
       count = count + 1;
       setHeadingStored(true);
+      window.removeEventListener('deviceorientation', handleOrientationIos);
+    }else{
+      direction = (direction + offset + 360) % 360;
+      setHeadingAdjust(direction);
       window.removeEventListener('deviceorientation', handleOrientationIos);
     }
     
@@ -848,7 +858,7 @@ const Nav = () => {
             <div onClick={() => rotate('left')} className='rotateArrowIcon'><FaArrowRight /></div>
           </div>
           <div className='user-orientation'>
-            {/* <img src='compassArrow2.png' style={{height : "80px", width : "80px", transform: `rotate(${heading.toFixed(0)}deg)`}}></img> */}
+            <img src='compassArrow.png' style={{height : "80px", width : "80px", transform: `rotate(${headingAdjust.toFixed(0)}deg)`}}></img>
           </div>
         </div>
         }
@@ -857,12 +867,6 @@ const Nav = () => {
         <div className='map-container'>
           <PathModel path = {modelPath} userPosCurr = {userPosition} />
         </div>
-        }
-
-        {showBottomSection && !showContainer && !mapView &&
-         <div className='map-close-icon' onClick={showMap}>
-          <img className = "map-icon" src='map.png' alt = "map_icon"></img>
-         </div>
         }
 
         {!showContainer && showBottomSection && !mapView &&(

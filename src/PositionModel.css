@@ -23,3 +23,20 @@
     place-items: center;
     margin-right: 5px;
 }
+
+.loop-user {
+    position: absolute;
+    bottom: 17%; 
+    right: 4%; 
+    z-index: 10; 
+    background-color: #cccccc; 
+    padding: 5px;
+    cursor: pointer; 
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    place-items: center;
+    margin-right: 5px;
+}

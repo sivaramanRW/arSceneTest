@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import './MapModel.css';
 import { FaTimes } from 'react-icons/fa';
+import { graph, coordinates, dijkstra } from './graphData';
 
 const FloorMap = ({ path }) => {
   const modelCoordinates = {
@@ -113,7 +114,8 @@ const FloorMap = ({ path }) => {
     "BL": [-3.5, 12.35],
     "RL": [-3.3, -6.5],
     "TO": [-3.5, -11.5],
-    "G": [-2.5, 5.5]
+    "G": [-2.5, 5.5],
+    "DC": [-4.5, 9.5]
   };
 
   const containerRef = useRef(null);
@@ -122,7 +124,6 @@ const FloorMap = ({ path }) => {
   const [modelVisible, setModelVisible] = useState(false);
   const userPos = modelCoordinates[path];
   const [selectedPoint, setSelectedPoint] = useState(null);
-
 
   useEffect(() => {
     if (!modelVisible) return;
@@ -165,7 +166,7 @@ const FloorMap = ({ path }) => {
     let model;
     const loader = new GLTFLoader();
     loader.load(
-      'floor3d2.glb',
+      'floor3d.glb',
       (gltf) => {
         model = gltf.scene;
         scene.add(model);
@@ -188,11 +189,12 @@ const FloorMap = ({ path }) => {
               "RB": 0x0000ff,
               "TB": 0x0000ff,
               "WB": 0x0000ff,
-              "CH": 0xffff00,
-              "BL": 0xff00ff,
-              "RL": 0xffa500,
-              "TO": 0X00ff00,
-              "G": 0x00ffff
+              "CA": 0xffff00,
+              "BB": 0xff00ff,
+              "RE": 0xffa500,
+              "TD": 0X00ff00,
+              "G": 0x00ffff,
+              "DC": 0xB8860B
             };
 
             const points = Object.keys(pointColors);
@@ -202,18 +204,20 @@ const FloorMap = ({ path }) => {
               let boxGeometry;
               if (point === "HB") {
                 boxGeometry = new THREE.BoxGeometry(4.5, 1, 4.3);
-              } else if (point === "CH") {
+              } else if (point === "CA") {
                 boxGeometry = new THREE.BoxGeometry(4.5, 0.5, 5.0);
               } else if (point === "G") {
                 boxGeometry = new THREE.BoxGeometry(3.1, 0.5, 7.0);
-              } else if (point === "TO") {
+              } else if (point === "TD") {
                 boxGeometry = new THREE.BoxGeometry(4.7, 0.5, 4.5);
-              } else if (point === "RL") {
+              } else if (point === "RE") {
                 boxGeometry = new THREE.BoxGeometry(4.5, 0.5, 5.0);
-              } else if (point === "BL") {
+              } else if (point === "BB") {
                 boxGeometry = new THREE.BoxGeometry(4.9, 0.5, 4.4);
               } else if (point === "WB") {
                 boxGeometry = new THREE.BoxGeometry(4.5, 0.7, 2.0);
+              } else if (point === "DC") {
+                boxGeometry = new THREE.BoxGeometry(1.5, 0.5, 7.0);
               } else {
                 boxGeometry = new THREE.BoxGeometry(4.5, 0.5, 2.8);
               }
@@ -246,9 +250,19 @@ const FloorMap = ({ path }) => {
                 const pointCoords = pointDetails[clickedPoint];
                 console.log(`Clicked point: ${clickedPoint}, Coordinates: ${pointCoords}`);
                 console.log(modelCoordinates[path]);
-                let one = {x: modelCoordinates[path][0], y : modelCoordinates[path][1]};
-                let two = {x: pointCoords[0], y : pointCoords[1]};
-                createPathSegment(one, two);
+                
+                const [shortestPath, distance] = dijkstra(graph, path, clickedPoint);
+                console.log('Shortest path:', shortestPath);
+                console.log('Total distance:', distance);
+
+                for(let i = 0; i < shortestPath.length - 1; i++){
+                  // console.log('kk', shortestPath[i]);
+                  // console.log('jj',modelCoordinates[shortestPath[i]][0], modelCoordinates[shortestPath[i]][1] );
+                  let one = {x: modelCoordinates[shortestPath[i]][0], y : modelCoordinates[shortestPath[i]][1] };
+                  let two = {x:  modelCoordinates[shortestPath[i+1]][0], y : modelCoordinates[shortestPath[i+1]][1] };
+                  createPathSegment(one,two);
+                }
+                //visualizeShortestPath(shortestPath);
               }
             };
 
@@ -266,42 +280,60 @@ const FloorMap = ({ path }) => {
       }
     );
 
+    // const visualizeShortestPath = (shortestPath) => {
+    //   ThreeDModelRed.current.children.forEach((child) => {
+    //     if (child.userData && child.userData.isPathSegment) {
+    //       ThreeDModelRed.current.remove(child);
+    //     }
+    //   });
+
+    //   for (let i = 0; i < shortestPath.length - 1; i++) {
+    //     const start = coordinates[shortestPath[i]];
+    //     const end = coordinates[shortestPath[i + 1]];
+    //     createPathSegment(
+    //       { x: start[0], y: start[1] },
+    //       { x: end[0], y: end[1] }
+    //     );
+    //   }
+    // };
+
     const createPathSegment = (start, end) => {
       createArrowPath([
-          new THREE.Vector3(start.x, 0.5, start.y),
-          new THREE.Vector3(end.x, 0.5, end.y)
+        new THREE.Vector3(start.x, 0.5, start.y),
+        new THREE.Vector3(end.x, 0.5, end.y)
       ]);
     }
   
     const createArrowPath = (points) => {
       const loader = new GLTFLoader();
       loader.load('carArrow.glb', (gltf) => {
-          const arrowModel = gltf.scene;
+        const arrowModel = gltf.scene;
   
-          const distance = points[0].distanceTo(points[1]);
-          const arrowSpacing = 0.5;
-          const numArrows = Math.ceil(distance / arrowSpacing);
+        const distance = points[0].distanceTo(points[1]);
+        const arrowSpacing = 0.5;
+        const numArrows = Math.ceil(distance / arrowSpacing);
   
-          for (let i = 0; i < numArrows; i++) {
-              const t = i / (numArrows - 1);
-              const position = new THREE.Vector3().lerpVectors(points[0], points[1], t);
-              const arrow = arrowModel.clone();
-              arrow.position.copy(position);
-              arrow.scale.set(0.06, 0.06, 0.06);
+        for (let i = 0; i < numArrows; i++) {
+          const t = i / (numArrows - 1);
+          const position = new THREE.Vector3().lerpVectors(points[0], points[1], t);
+          const arrow = arrowModel.clone();
+          arrow.position.copy(position);
+          arrow.scale.set(0.06, 0.06, 0.06);
   
-              const direction = new THREE.Vector3().subVectors(points[1], points[0]).normalize();
-              const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction);
-              arrow.setRotationFromQuaternion(quaternion);
-              arrow.rotateY(Math.PI);
-              arrow.traverse((child) => {
-                  if (child.isMesh) {
-                      child.material.color.set(0xb83ff);
-                  }
-              });
-              ThreeDModelRed.current.add(arrow);
-          }
+          const direction = new THREE.Vector3().subVectors(points[1], points[0]).normalize();
+          const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction);
+          arrow.setRotationFromQuaternion(quaternion);
+          arrow.rotateY(Math.PI);
+          arrow.traverse((child) => {
+            if (child.isMesh) {
+              child.material.color.set(0xb83ff);
+            }
+          });
+          arrow.userData = { isPathSegment: true };
+          ThreeDModelRed.current.add(arrow);
+        }
       }, undefined, (error) => {
-          console.error('An error happened', error);
+        console.error('An error happened', error);
       });
     }
 

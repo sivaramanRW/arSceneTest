@@ -10,8 +10,6 @@ import { TrackingPointsDegree } from './TrackingPointsDegree';
 import { TrackingPointsAdjust } from './TrackingPointsAdjust';
 import { graph, dijkstra } from './graphData.js';
 
-let initialCam = 0;
-
 const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
 
   const modelCoordinates = {
@@ -133,6 +131,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   const [isModelLoaded, setIsModelLoaded] = useState(false);
   const [userPos, setUserPos] = useState(path[0]);
   const [TrackingPointsStore, setTrackingPointsStore] = useState(0);
+  const [LoopTracking, setLoopTracking] = useState(false);
 
   const getOrbitPoint = (firstPoint, nextPoint) => {
     let distance = 0.6;
@@ -158,6 +157,7 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
       const TrackedPosition = findClosestPoint(TrackingPointsAdjustment, [userPosCurr.x, userPosCurr.z]);
       setUserPos(TrackedPosition);
       cubeRef.current.position.set(modelCoordinates[TrackedPosition][0], 0.6, modelCoordinates[TrackedPosition][1]);
+      if(LoopTracking) { locateuser(); }
     }
   }, [isModelLoaded, path, userPosCurr]); 
 
@@ -298,18 +298,25 @@ const PositionModel = ({ path, userPosCurr, rotateAngle, adjustAngle }) => {
   }, []);
 
   const locateuser = () => {
-    const [foundPath, totalDistance] = dijkstra(graph, userPos, path[path.length-1]);
-    const firstPoint = new THREE.Vector3(modelCoordinates[foundPath[0]][0], 0 , modelCoordinates[foundPath[0]][1])
-    const nextPoint = new THREE.Vector3(modelCoordinates[foundPath[1]][0], 0 , modelCoordinates[foundPath[1]][1])
-    const orbitTarget = getOrbitPoint(firstPoint, nextPoint);
-    const cameraPosition = getCameraPosition(modelCoordinates[foundPath[0]],orbitTarget);
-    cameraRef.current.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
-    orbitRef.current.target.set(orbitTarget[0], 0, orbitTarget[1]);
+    if(userPos !== path[path.length-1]){
+      const [foundPath, totalDistance] = dijkstra(graph, userPos, path[path.length-1]);
+      const firstPoint = new THREE.Vector3(modelCoordinates[foundPath[0]][0], 0 , modelCoordinates[foundPath[0]][1])
+      const nextPoint = new THREE.Vector3(modelCoordinates[foundPath[1]][0], 0 , modelCoordinates[foundPath[1]][1])
+      const orbitTarget = getOrbitPoint(firstPoint, nextPoint);
+      const cameraPosition = getCameraPosition(modelCoordinates[foundPath[0]],orbitTarget);
+      cameraRef.current.position.set(cameraPosition[0], 1.5, cameraPosition[1]);
+      orbitRef.current.target.set(orbitTarget[0], 0, orbitTarget[1]);
+    }
   }
 
+  const LoopTrack = () => setLoopTracking(prevState => !prevState);
+  
   return (
     <div style={{height : "100%", width : "100%"}}>
       <div className='position-map-containers' ref={containerRef}></div>
+      <div className="loop-user" onClick={LoopTrack}>
+        <img src='tracking.png' style={{height : "30px", width : "30px"}}></img>
+      </div>
       <div className = "locate-user" onClick={locateuser}>
         <img src='app.png' style={{height : "30px", width : "30px"}}></img>
       </div>
