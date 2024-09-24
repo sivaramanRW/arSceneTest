@@ -392,7 +392,6 @@ const Nav = () => {
     
     setTotalRotationAngle(prevAngle => {
       const newAngle = prevAngle + (direction === 'left' ? angle : -angle);
-      console.log('Total rotation angle:', newAngle * (180 / Math.PI), 'degrees');
       return newAngle;
     });
 
@@ -445,7 +444,7 @@ const Nav = () => {
     setCurrentSegmentIndex(0);
 
     while (sceneRef.current.children.length > 0) {
-        sceneRef.current.remove(sceneRef.current.children[0]);
+      sceneRef.current.remove(sceneRef.current.children[0]);
     }
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -721,8 +720,7 @@ const Nav = () => {
     }
     
   };
-  
-  const showMap = () => setmapView(true);
+
   const hideMap = () => setmapView(false);
   const ShowModelposition = () => setPositionModelShow(true);
   const HideModelposition = () => setPositionModelShow(false);
