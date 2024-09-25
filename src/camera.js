@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './camera.css';
 import { useNavigate } from 'react-router-dom';
+import Lottie from 'react-lottie';
+import animationData from './Randomwalk.json';
 
 const Camera = () => {
   const videoRef = useRef(null);
@@ -12,6 +14,14 @@ const Camera = () => {
   const [retake, setRetake] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const navigate = useNavigate();
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  };
 
   useEffect(() => {
     startCamera();
@@ -164,16 +174,16 @@ const Camera = () => {
         )}
         
         <div className='button-section'>
-          {!isRecording && !videoURL && <button className='start-record' onTouchStart={startRecording} onClick={startRecording}>Start Recording</button>}
-          {isRecording && <button className='stop-record' onTouchStart={stopRecording} onClick={stopRecording}>Stop Recording</button>}
-          {videoURL && !isRecording && !retake && <button className='start-localizing' onTouchStart={uploadVideo} onClick={uploadVideo}>Start Localizing</button>}
-          {retake && <button className='start-localizing' onTouchStart={retake_video} onClick={retake_video}>Retake</button>}
+          {!isRecording && !videoURL && <button className='start-record' onClick={startRecording}>Start Recording</button>}
+          {isRecording && <button className='stop-record' onClick={stopRecording}>Stop Recording</button>}
+          {videoURL && !isRecording && !retake && <button className='start-localizing' onClick={uploadVideo}>Start Localizing</button>}
+          {retake && <button className='start-localizing' onClick={retake_video}>Retake</button>}
         </div>
       </div>
       {loading && (
         <div className="loading-overlay">
           <div className="loading-content">
-            <div className="spinner"></div>
+            <Lottie className="spinner" options={defaultOptions} height={100} width={100} />
             <div className="loading-message">Please don't move while localizing...</div>
           </div>
         </div>
